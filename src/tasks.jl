@@ -62,6 +62,20 @@ end
 period(τ::PeriodicImplicitTask) = τ.T
 deadline(τ::PeriodicImplicitTask) = τ.T
 cost(τ::PeriodicImplicitTask) = τ.C
+# True by definition, so don't even bother checking
+implicit_deadline(τ::PeriodicImplicitTask) = true
+constrained_deadline(τ::PeriodicImplicitTask) = true
+
+# Conversion rules for Periodic[Implicit]Task
+Base.convert(::Type{PeriodicTask{T}}, τ::PeriodicTask{S}) where {T<:Real, S<:Real} = PeriodicTask{T}(τ.T, τ.D, τ.C)
+Base.convert(::Type{PeriodicImplicitTask{T}}, τ::PeriodicImplicitTask{S}) where {T<:Real, S<:Real} = PeriodicImplicitTask{T}(τ.T, τ.C)
+Base.convert(::Type{PeriodicTask{T}}, τ::PeriodicImplicitTask{S}) where {T<:Real, S<:Real} = PeriodicTask{T}(τ.T, τ.T, τ.C)
+Base.convert(::Type{PeriodicTask}, τ::PeriodicImplicitTask{T}) where {T<:Real} = PeriodicTask{T}(τ.T, τ.T, τ.C)
+
+# Promotion rules for Periodic[Implicit]Task
+Base.promote_rule(::Type{PeriodicTask{T}}, ::Type{PeriodicTask{S}}) where {T<:Real, S<:Real} = PeriodicTask{promote_type(T, S)}
+Base.promote_rule(::Type{PeriodicTask{T}}, ::Type{PeriodicImplicitTask{S}}) where {T<:Real, S<:Real} = PeriodicTask{promote_type(T, S)}
+Base.promote_rule(::Type{PeriodicImplicitTask{T}}, ::Type{PeriodicImplicitTask{S}}) where {T<:Real, S<:Real} = PeriodicImplicitTask{promote_type(T, S)}
 
 
 """
