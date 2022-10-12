@@ -36,6 +36,7 @@ using Test
         @test density(τ_f1) isa Float64
     end
     @testset "PeriodicImplicitTask" begin
+        @test_throws TypeError PeriodicImplicitTask{ComplexF64}(4, 2)
         @test period(τ_4) == 5
         @test deadline(τ_4) == 5
         @test cost(τ_4) == 2
@@ -51,6 +52,18 @@ using Test
         @test utilization(τ_f4) isa Float64
         @test density(τ_f4) ≈ 0.4
         @test density(τ_f4) isa Float64
+    end
+    @testset "Periodic[Implicit]Task conversion" begin
+        @test convert(PeriodicTask{Float64}, τ_1) == τ_f1
+        @test convert(PeriodicTask{Float64}, τ_1) isa PeriodicTask{Float64}
+        @test convert(PeriodicImplicitTask{Float64}, τ_4) == τ_f4
+        @test convert(PeriodicImplicitTask{Float64}, τ_4) isa PeriodicImplicitTask{Float64}
+        @test convert(PeriodicTask{Int64}, τ_4) == PeriodicTask{Int64}(5, 5, 2)
+        @test convert(PeriodicTask{Int64}, τ_4) isa PeriodicTask{Int64}
+        @test convert(PeriodicTask{Float64}, τ_4) == PeriodicTask{Float64}(5, 5, 2)
+        @test convert(PeriodicTask{Float64}, τ_4) isa PeriodicTask{Float64}
+        @test convert(PeriodicTask{Float64}, τ_f4) == PeriodicTask{Float64}(5, 5, 2)
+        @test convert(PeriodicTask{Float64}, τ_f4) isa PeriodicTask{Float64}
     end
     @testset "Periodic[Implicit]Task promotion" begin
         @test eltype([τ_1, τ_f1]) == PeriodicTask{Float64}
