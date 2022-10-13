@@ -17,8 +17,15 @@ export AbstractRealTimeTask,
        AbstractRealTimeTaskSystem,
        TaskSystem,
        rate_monotonic!,
-       deadline_monotonic!
+       deadline_monotonic!,
+       # Weakly-hard constraints
+       WeaklyHardConstraint,
+       MeetAny,
+       MeetRow,
+       MissAny,
+       MissRow
 include("tasks.jl")
 include("tasksystems.jl")
+include("weaklyhard.jl")
 
 end
