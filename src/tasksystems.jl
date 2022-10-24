@@ -13,28 +13,30 @@ mutable struct TaskSystem{T} <: AbstractRealTimeTaskSystem{T}
     The tasks contained within the TaskSystem
     """
     tasks::Vector{T}
-
-    """
-        TaskSystem{T}(undef, n)
-
-    Construct an uninitialized `TaskSystem{T}` of `n` tasks.
-    """
-    TaskSystem{T}(undef::UndefInitializer, n::Integer) where {T <: AbstractRealTimeTask} = new(Vector{T}(undef, n))
-    """
-        TaskSystem{T}(nothing, n)
-
-    Construct a `TaskSystem{T}` of `n` tasks, initialized with `nothing` entries.  Element
-    type `T` must be able to hold these values, i.e. `Nothing <: T`.
-    """
-    TaskSystem{T}(nothing::Nothing, n::Integer) where {T <: AbstractRealTimeTask} = new(Vector{T}(nothing, n))
-    """
-        TaskSystem{T}(missing, n)
-
-    Construct a `TaskSystem{T}` of `n` tasks, initialized with `missing` entries.  Element
-    type `T` must be able to hold these values, i.e. `Missing <: T`.
-    """
-    TaskSystem{T}(missing::Missing, n::Integer) where {T <: AbstractRealTimeTask} = new(Vector{T}(missing, n))
 end
+
+"""
+    TaskSystem{T}(undef, n)
+
+Construct an uninitialized `TaskSystem{T}` of `n` tasks.
+"""
+TaskSystem{T}(undef::UndefInitializer, n::Integer) where {T <: AbstractRealTimeTask} = TaskSystem(Vector{T}(undef, n))
+
+"""
+    TaskSystem{T}(nothing, n)
+
+Construct a `TaskSystem{T}` of `n` tasks, initialized with `nothing` entries.  Element
+type `T` must be able to hold these values, i.e. `Nothing <: T`.
+"""
+TaskSystem{T}(nothing::Nothing, n::Integer) where {T <: AbstractRealTimeTask} = TaskSystem(Vector{T}(nothing, n))
+
+"""
+    TaskSystem{T}(missing, n)
+
+Construct a `TaskSystem{T}` of `n` tasks, initialized with `missing` entries.  Element
+type `T` must be able to hold these values, i.e. `Missing <: T`.
+"""
+TaskSystem{T}(missing::Missing, n::Integer) where {T <: AbstractRealTimeTask} = TaskSystem(Vector{T}(missing, n))
 
 # Collection methods
 Base.isempty(T::TaskSystem) = isempty(T.tasks)
@@ -45,6 +47,7 @@ Base.eltype(T::TaskSystem) = eltype(T.tasks)
 Base.iterate(T::TaskSystem) = iterate(T.tasks)
 Base.iterate(T::TaskSystem, i) = iterate(T.tasks, i)
 Base.getindex(T::TaskSystem, i::Integer) = T.tasks[i]
+Base.getindex(T::TaskSystem, inds) = TaskSystem(getindex(T.tasks, inds))
 Base.setindex!(T::TaskSystem{S}, value::S, i::Integer) where {S <: AbstractRealTimeTask} = setindex!(T.tasks, value, i)
 
 """

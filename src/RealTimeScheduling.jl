@@ -23,9 +23,12 @@ export AbstractRealTimeTask,
        MeetAny,
        MeetRow,
        MissAny,
-       MissRow
+       MissRow,
+       # Schedulability tests
+       schedulable_fixed_priority
 include("tasks.jl")
 include("tasksystems.jl")
 include("weaklyhard.jl")
+include("schedulability.jl")
 
 end

@@ -136,5 +136,5 @@ function request_bound(τ::AbstractRealTimeTask, t::Real)
     if t < 0
         return 0
     end
-    return (floor(Integer, t / period(τ)) + 1) * cost(τ)
+    return ceil(Integer, t / period(τ)) * cost(τ)
 end
