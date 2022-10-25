@@ -96,6 +96,8 @@ constrained_deadline(τ::AbstractRealTimeTask) = deadline(τ) <= period(τ)
     utilization(τ::AbstractRealTimeTask)
 
 Compute the utilization of real-time task `τ`, cost/period.
+
+See also [`density`](@ref).
 """
 utilization(τ::AbstractRealTimeTask) = cost(τ)/ period(τ)
 utilization(τ::AbstractRealTimeTask{<:Union{Integer, Rational}}) = cost(τ) // period(τ)
@@ -104,6 +106,8 @@ utilization(τ::AbstractRealTimeTask{<:Union{Integer, Rational}}) = cost(τ) // 
     density(τ::AbstractRealTimeTask)
 
 Compute the density of real-time task `τ`, cost/min(period, deadline).
+
+See also [`utilization`](@ref).
 """
 density(τ::AbstractRealTimeTask) = cost(τ) / minimum([period(τ), deadline(τ)])
 density(τ::AbstractRealTimeTask{<:Union{Integer, Rational}}) = cost(τ) // minimum([period(τ), deadline(τ)])

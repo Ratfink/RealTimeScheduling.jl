@@ -25,9 +25,13 @@ false
 ```
 """
 function schedulable_fixed_priority(T::AbstractRealTimeTaskSystem)
+    # Make sure it's even feasible first
+    feasible(T) || return false
+
     # First run a utilization test, due to Liu and Layland
-    utilization(T) < _u_rm(length(T)) && return true
-    utilization(T) > 1 && return false
+    if implicit_deadline(T) && utilization(T) < _u_rm(length(T))
+        return true
+    end
 
     # If utilization test fails, fall back to time-demand analysis (TDA)
     if constrained_deadline(T)

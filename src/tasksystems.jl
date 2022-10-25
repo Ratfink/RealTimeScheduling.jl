@@ -6,7 +6,7 @@ abstract type AbstractRealTimeTaskSystem{T <: AbstractRealTimeTask} <: AbstractV
 """
     TaskSystem{T} <: AbstractRealTimeTaskSystem
 
-A concrete real-time task system, holding a [`Vector`](@ref) of tasks of type `T`.
+A concrete real-time task system, holding a `Vector` of tasks of type `T`.
 """
 mutable struct TaskSystem{T} <: AbstractRealTimeTaskSystem{T}
     """
@@ -77,6 +77,13 @@ utilization(T::AbstractRealTimeTaskSystem) = sum(utilization, T)
 Return the sum density of all tasks in `T`.
 """
 density(T::AbstractRealTimeTaskSystem) = sum(density, T)
+
+"""
+    feasible(T::AbstractRealTimeTaskSystem)
+
+Test whether the real-time task system `T` is feasible, i.e. its density is at most 1.
+"""
+feasible(T::AbstractRealTimeTaskSystem) = density(T) <= 1
 
 """
     rate_monotonic!(T::AbstractRealTimeTaskSystem)
