@@ -46,5 +46,27 @@ function _tda_lsd(T::AbstractRealTimeTaskSystem)
 end
 
 function _general_tda(T::AbstractRealTimeTaskSystem)
-    error("Not implemented: General TDA is not yet available.")
+    for i in axes(T, 1)
+        # Compute the length of the busy interval for task i
+        hep = T[begin:i]
+        H = prod(period, hep)
+        busy_interval = _fixed_point(t -> request_bound(hep, t), sum(cost, hep), H)
+        # If it's greater than the hyperperiod of all hep tasks, unbounded deadline misses
+        if busy_interval > H
+            return false
+        end
+        # Stop here for task 1
+        i > 1 || continue
+        # Check the response time of each job in the busy interval
+        jobs = ceil(busy_interval / period(T[i]))
+        hp = T[begin:i-1]
+        for job in 1:jobs
+            abs_deadline = period(T[i])*(job-1) + deadline(T[i])
+            fp = _fixed_point(t -> request_bound(hp, t) + cost(T[i])*job, sum(cost, hp), abs_deadline)
+            if fp > abs_deadline
+                return false
+            end
+        end
+    end
+    return true
 end
