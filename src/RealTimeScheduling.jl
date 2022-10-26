@@ -24,6 +24,7 @@ export AbstractRealTimeTask,
        MeetRow,
        MissAny,
        MissRow,
+       SamplerMissRow,
        # Schedulability tests
        schedulable_fixed_priority
 include("tasks.jl")
