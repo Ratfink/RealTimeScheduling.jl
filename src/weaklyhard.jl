@@ -93,14 +93,14 @@ function <=(c::MeetAny, d::MeetRow)
 end
 
 
-struct SamplerMissRow <: Random.Sampler{BitVector}
+struct SamplerUniformMissRow <: Random.Sampler{BitVector}
     constraint::MissRow
     H::Int64
     l::Matrix{BigInt}
 end
 
 """
-    SamplerMissRow(constraint::MissRow, H::Int64)
+    SamplerUniformMissRow(constraint::MissRow, H::Int64)
 
 Pre-compute data for uniformly sampling `BitVector` objects from a [`MissRow`](@ref)
 constraint.  The sampled vectors will have length `H`.
@@ -111,7 +111,7 @@ the random sampling from regular languages." Algorithmica 62.1 (2012): 130-145.
 # Examples
 
 ```julia-repl
-julia> sp = SamplerMissRow(MissRow(3), 10);
+julia> sp = SamplerUniformMissRow(MissRow(3), 10);
 
 julia> rand(sp)
 10-element BitVector:
@@ -127,7 +127,7 @@ julia> rand(sp)
 1
 ```
 """
-function SamplerMissRow(constraint::MissRow, H::Int64)
+function SamplerUniformMissRow(constraint::MissRow, H::Int64)
     l = zeros(BigInt, constraint.miss+2, H+1)
     l[1:constraint.miss+1, 1] .= 1
     for i = 2:H+1
@@ -139,10 +139,10 @@ function SamplerMissRow(constraint::MissRow, H::Int64)
             end
         end
     end
-    SamplerMissRow(constraint, H, l)
+    SamplerUniformMissRow(constraint, H, l)
 end
 
-function Random.rand(rng::Random.AbstractRNG, sp::SamplerMissRow)
+function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
     q = 0
     ret = falses(sp.H)
     for i = 1:sp.H

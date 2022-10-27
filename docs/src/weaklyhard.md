@@ -20,12 +20,12 @@ MissRow
 A weakly hard constraint can be viewed as a sample space of bit strings, with
 `0` representing a deadline miss, and `1` representing a deadline hit.  A
 finite length must be provided to generate such a string.  For now, we only
-support sampling from [`MissRow`](@ref) constraints, which is done uniformly.
+support uniform sampling from [`MissRow`](@ref) constraints.
 
 Unfortunately, the requirement of specifying a string length precludes the
 easiest use of the `Random.rand` API.  However, the precomputation required is
 non-negligible, so it would be a good idea to first create a sampler anyway.
 
 ```@docs
-SamplerMissRow
+SamplerUniformMissRow
 ```
