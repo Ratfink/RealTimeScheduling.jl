@@ -1,7 +1,7 @@
 # Task Systems
 
 For interesting schedulability problems, a set of tasks needs to be contained
-within a *task system*.  RealTimeSystems provides such a type, which is a
+within a *task system*.  RealTimeScheduling provides such a type, which is a
 fairly thin wrapper around a standard `Vector`.
 
 ```@docs
@@ -35,7 +35,7 @@ feasible(::AbstractRealTimeTaskSystem)
 
 ## Task Priority
 
-For fixed-priority (FP) scheduling, RealTimeSystems uses an implicit model of
+For fixed-priority (FP) scheduling, RealTimeScheduling uses an implicit model of
 task priority, whereby the index of a task in a given [`TaskSystem`](@ref) *is*
 its priority.  Lower indices are considered higher priority, as is usually the
 case in the literature.
