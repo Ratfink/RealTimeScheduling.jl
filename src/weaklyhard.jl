@@ -1,4 +1,4 @@
-import Random, Distributions
+import Random
 
 """
 Abstract parent type of all weakly hard constraints
@@ -93,8 +93,14 @@ function <=(c::MeetAny, d::MeetRow)
 end
 
 
+struct SamplerMissRow <: Random.Sampler{BitVector}
+    constraint::MissRow
+    H::Int64
+    l::Matrix{BigInt}
+end
+
 """
-    SamplerMissRow(constraint::MissRow, H)
+    SamplerMissRow(constraint::MissRow, H::Int64)
 
 Pre-compute data for uniformly sampling `BitVector` objects from a [`MissRow`](@ref)
 constraint.  The sampled vectors will have length `H`.
@@ -121,45 +127,35 @@ julia> rand(sp)
 1
 ```
 """
-struct SamplerMissRow <: Random.Sampler{BitVector}
-    constraint::MissRow
-    H::Int64
-	l::Matrix{BigInt}
-	function SamplerMissRow(constraint::MissRow, H)
-		l = zeros(BigInt, constraint.miss+2, H+1)
-		l[1:constraint.miss+1, 1] .= 1
-		for i = 2:H+1
-			for q = 1:constraint.miss+2
-				if q == constraint.miss+2
-					l[q, i] = 2 * l[q, i-1]
-				else
-					l[q, i] = l[q+1, i-1] + l[1, i-1]
-				end
-			end
-		end
-		new(constraint, H, l)
-	end
+function SamplerMissRow(constraint::MissRow, H::Int64)
+    l = zeros(BigInt, constraint.miss+2, H+1)
+    l[1:constraint.miss+1, 1] .= 1
+    for i = 2:H+1
+        for q = axes(l, 1)
+            if q == constraint.miss+2
+                l[q, i] = 2l[q, i-1]
+            else
+                l[q, i] = l[q+1, i-1] + l[1, i-1]
+            end
+        end
+    end
+    SamplerMissRow(constraint, H, l)
 end
 
 function Random.rand(rng::Random.AbstractRNG, sp::SamplerMissRow)
-	q = 0
-	ret = falses(sp.H)
-	for i = 1:sp.H
-		d = BigFloat(sp.l[q + 1, sp.H - i + 2])
-		if q == sp.constraint.miss + 1
-			prob_one = sp.l[q + 1, sp.H - i + 1] / d
-		else
-			prob_one = sp.l[1, sp.H - i + 1] / d
-		end
-		rand_bit = Random.rand(Distributions.Binomial(1, Float64(prob_one)))
-		ret[i] = rand_bit
-		if rand_bit == 1
-			if q != sp.constraint.miss + 1
-				q = 0
-			end
-		elseif q != sp.constraint.miss + 1
-			q += 1
-		end
-	end
-	ret
+    q = 0
+    ret = falses(sp.H)
+    for i = 1:sp.H
+        d = sp.l[q + 1, sp.H - i + 2]
+        if q == sp.constraint.miss + 1
+            prob_one = sp.l[q + 1, sp.H - i + 1]
+        else
+            prob_one = sp.l[1, sp.H - i + 1]
+        end
+        ret[i] = Random.rand() * d < prob_one
+        if q != sp.constraint.miss + 1
+            q = (ret[i]) ? 0 : q+1
+        end
+    end
+    ret
 end
