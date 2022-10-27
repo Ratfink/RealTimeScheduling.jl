@@ -1,3 +1,5 @@
+import Random
+
 """
 Abstract parent type of all weakly hard constraints
 
@@ -88,4 +90,72 @@ end
 function <=(c::MeetAny, d::MeetRow)
     z = c.window - c.meet
     d.meet <= minimum([floor(d.window / (z + 1)), ceil(c.meet/z)])
+end
+
+
+struct SamplerUniformMissRow <: Random.Sampler{BitVector}
+    constraint::MissRow
+    H::Int64
+    l::Matrix{BigInt}
+end
+
+"""
+    SamplerUniformMissRow(constraint::MissRow, H::Int64)
+
+Pre-compute data for uniformly sampling `BitVector` objects from a [`MissRow`](@ref)
+constraint.  The sampled vectors will have length `H`.
+
+The algorithm used is due to Bernardi, Olivier, and Omer Giménez, "A linear algorithm for
+the random sampling from regular languages." Algorithmica 62.1 (2012): 130-145.
+
+# Examples
+
+```julia-repl
+julia> sp = SamplerUniformMissRow(MissRow(3), 10);
+
+julia> rand(sp)
+10-element BitVector:
+1
+1
+0
+1
+1
+0
+1
+0
+0
+1
+```
+"""
+function SamplerUniformMissRow(constraint::MissRow, H::Int64)
+    l = zeros(BigInt, constraint.miss+2, H+1)
+    l[1:constraint.miss+1, 1] .= 1
+    for i = 2:H+1
+        for q = axes(l, 1)
+            if q == constraint.miss+2
+                l[q, i] = 2l[q, i-1]
+            else
+                l[q, i] = l[q+1, i-1] + l[1, i-1]
+            end
+        end
+    end
+    SamplerUniformMissRow(constraint, H, l)
+end
+
+function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
+    q = 0
+    ret = falses(sp.H)
+    for i = 1:sp.H
+        d = sp.l[q + 1, sp.H - i + 2]
+        if q == sp.constraint.miss + 1
+            prob_one = sp.l[q + 1, sp.H - i + 1]
+        else
+            prob_one = sp.l[1, sp.H - i + 1]
+        end
+        ret[i] = Random.rand() * d < prob_one
+        if q != sp.constraint.miss + 1
+            q = (ret[i]) ? 0 : q+1
+        end
+    end
+    ret
 end
