@@ -142,9 +142,8 @@ function SamplerUniformMissRow(constraint::MissRow, H::Int64)
     SamplerUniformMissRow(constraint, H, l)
 end
 
-function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
+function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformMissRow)
     q = 0
-    ret = falses(sp.H)
     for i = 1:sp.H
         d = sp.l[q + 1, sp.H - i + 2]
         if q == sp.constraint.miss + 1
@@ -152,10 +151,15 @@ function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
         else
             prob_one = sp.l[1, sp.H - i + 1]
         end
-        ret[i] = Random.rand() * d < prob_one
+        a[i] = Random.rand() * d < prob_one
         if q != sp.constraint.miss + 1
-            q = (ret[i]) ? 0 : q+1
+            q = (a[i]) ? 0 : q+1
         end
     end
-    ret
+    a
+end
+
+function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
+    a = falses(sp.H)
+    Random.rand!(rng, a, sp)
 end
