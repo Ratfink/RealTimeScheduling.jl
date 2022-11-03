@@ -100,7 +100,16 @@ Base.show(io::IO, ::MIME"text/latex", c::MissRow) = print(io, "\\overline{\\lang
 Base.show(io::IO, ::MIME"application/x-latex", c::WeaklyHardConstraint) = show(io, MIME"text/latex", c)
 
 import Base.==
+# Try swapping arguments for unspecified methods
+==(c::WeaklyHardConstraint, d::WeaklyHardConstraint) = d == c
+# Comparisons of same type
 ==(c::MeetRow, d::MeetRow) = (2*c.meet > c.window && 2*d.meet > d.window) || (c.meet == d.meet && c.window == d.window)
+==(c::MeetAny, d::MeetAny) = (c.meet == 0 && d.meet == 0) || (c.meet == d.meet && c.window == d.window)
+==(c::MissRow, d::MissRow) = c.miss == d.miss
+# Comparisons for different types
+==(c::MeetAny, d::MeetRow) = (c.meet == 0 && d.meet == 0) || (c.meet == c.window && 2*d.meet > d.window)
+==(c::MeetAny, d::MissRow) = (c.meet == c.window && d.miss == 0)
+==(c::MeetRow, d::MissRow) = (2*c.meet > c.window && d.miss == 0)
 
 import Base.<=
 <=(c::MeetAny, d::MeetAny) = d.meet <= maximum([floor(d.window/c.window) * c.meet, d.window + ceil(d.window/c.window) * (c.meet - c.window)])
