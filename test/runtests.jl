@@ -92,4 +92,25 @@ using Test
         lehoczky[2] = PeriodicTask(100, 116, 62)
         @test !schedulable_fixed_priority(lehoczky)
     end
+
+    @testset "Weakly hard constraints" begin
+        # Construction
+        @test_throws DomainError MeetAny(-1, 5)
+        @test_throws DomainError MeetAny(1, -1)
+        @test_throws DomainError MeetAny(-1, -1)
+        @test_throws DomainError MeetAny(6, 5)
+        c = MeetAny(1, 5)
+        @test c.meet == 1
+        @test c.window == 5
+        @test_throws DomainError MeetRow(-1, 5)
+        @test_throws DomainError MeetRow(1, -1)
+        @test_throws DomainError MeetRow(-1, -1)
+        @test_throws DomainError MeetRow(6, 5)
+        c = MeetRow(1, 5)
+        @test c.meet == 1
+        @test c.window == 5
+        @test_throws DomainError MissRow(-1)
+        c = MissRow(3)
+        @test c.miss == 3
+    end
 end

@@ -24,7 +24,16 @@ struct MeetAny{T} <: WeaklyHardConstraint{T}
     Window size
     """
     window::T
+
+    function MeetAny{T}(meet, window) where {T<:Integer}
+        @boundscheck meet >= 0 || throw(DomainError(meet, "meet must be non-negative"))
+        @boundscheck window >= 0 || throw(DomainError(window, "window must be non-negative"))
+        @boundscheck meet <= window || throw(DomainError(meet, "meet must be at most window"))
+        new(meet, window)
+    end
 end
+
+MeetAny(meet::T, window::T) where {T<:Integer} = MeetAny{T}(meet, window)
 
 """
     MeetRow{T}(meet::T, window::T)
@@ -41,7 +50,16 @@ struct MeetRow{T} <: WeaklyHardConstraint{T}
     Window size
     """
     window::T
+
+    function MeetRow{T}(meet, window) where {T<:Integer}
+        @boundscheck meet >= 0 || throw(DomainError(meet, "meet must be non-negative"))
+        @boundscheck window >= 0 || throw(DomainError(window, "window must be non-negative"))
+        @boundscheck meet <= window || throw(DomainError(meet, "meet must be at most window"))
+        new(meet, window)
+    end
 end
+
+MeetRow(meet::T, window::T) where {T<:Integer} = MeetRow{T}(meet, window)
 
 """
     MissAny([T=Int, ]miss, window)
@@ -66,7 +84,14 @@ struct MissRow{T} <: WeaklyHardConstraint{T}
     Maximum number of deadlines that may be missed consecutively
     """
     miss::T
+
+    function MissRow{T}(miss) where {T<:Integer}
+        @boundscheck miss >= 0 || throw(DomainError(miss, "miss must be non-negative"))
+        new(miss)
+    end
 end
+
+MissRow(miss::T) where {T<:Integer} = MissRow{T}(miss)
 
 
 Base.show(io::IO, ::MIME"text/latex", c::MeetAny) = print(io, "\\genfrac{(}{)}{0pt}{}{$(c.meet)}{$(c.window)}")
