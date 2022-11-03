@@ -123,6 +123,10 @@ feasible(τ::AbstractRealTimeTask) = cost(τ) <= minimum([period(τ), deadline(�
     demand_bound(τ::AbstractRealTimeTask, t)
 
 Compute Baruah's demand bound function (DBF) for the task `τ`.
+
+```math
+\\max\\left(0, \\left\\lfloor \\frac{t - \\mathrm{deadline}(τ)}{\\mathrm{period}(τ)} + 1 \\right\\rfloor \\mathrm{cost}(τ) \\right)
+```
 """
 function demand_bound(τ::AbstractRealTimeTask, t::Real)
     if t <= 0
@@ -135,6 +139,10 @@ end
     request_bound(τ::AbstractRealTimeTask, t)
 
 Compute the request bound function (RBF) for the task `τ`.
+
+```math
+\\left\\lceil \\frac{t}{\\mathrm{period}(τ)}\\right\\rceil \\mathrm{cost}(τ)
+```
 """
 function request_bound(τ::AbstractRealTimeTask, t::Real)
     if t < 0
