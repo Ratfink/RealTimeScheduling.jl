@@ -13,7 +13,7 @@ abstract type WeaklyHardConstraint{T <: Integer} end
     MeetAny{T}(meet::T, window::T)
 
 Weakly hard constraint specifying that a task meets `meet` deadlines in any window of size
-`window`.
+`window`.  Must satisfy `0 <= meet <= window`.
 """
 struct MeetAny{T} <: WeaklyHardConstraint{T}
     """
@@ -39,7 +39,7 @@ MeetAny(meet::T, window::T) where {T<:Integer} = MeetAny{T}(meet, window)
     MeetRow{T}(meet::T, window::T)
 
 Weakly hard constraint specifying that a task meets `meet` deadlines in a row in any window
-of size `window`.
+of size `window`.  Must satisfy `0 <= meet <= window`.
 """
 struct MeetRow{T} <: WeaklyHardConstraint{T}
     """
@@ -78,6 +78,7 @@ MissAny(miss::Int, window::Int) = MeetAny{Int}(window - miss, window)
     MissRow{T}(miss::T)
 
 Weakly hard constraint specifying that a task misses at most `miss` deadlines in a row.
+Must satisfy `0 <= miss`.
 """
 struct MissRow{T} <: WeaklyHardConstraint{T}
     """
