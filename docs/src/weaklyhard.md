@@ -7,6 +7,23 @@ RealTimeScheduling provides basic support for weakly hard constraints.
     still very incomplete.  For now, we mainly support the constraints
     themselves, as well as comparisons between them.
 
+Constraints that are logically equivalent compare as equal:
+
+```@jldoctest
+julia> MeetAny(1, 1) == MissRow(0)
+true
+
+julia> MeetAny(1, 1) == MeetRow(3, 5)
+true
+
+julia> MeetRow(0, 0) == MeetAny(0, 0)
+true
+
+julia> MeetRow(4, 5) == MeetRow(3, 5)
+true
+```
+
+
 ```@docs
 WeaklyHardConstraint
 MeetAny
