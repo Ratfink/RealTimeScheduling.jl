@@ -30,6 +30,8 @@ MeetAny
 MissAny
 MeetRow
 MissRow
+HardRealTime
+BestEffort
 ```
 
 ## Sampling from Weakly Hard Constraints

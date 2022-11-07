@@ -24,6 +24,8 @@ export AbstractRealTimeTask,
        MeetRow,
        MissAny,
        MissRow,
+       HardRealTime,
+       BestEffort,
        SamplerUniformMissRow,
        # Schedulability tests
        schedulable_fixed_priority

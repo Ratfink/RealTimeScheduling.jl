@@ -116,16 +116,20 @@ using Test
         d = MissRow(0)
         e = MeetRow(3, 5)
         f = MeetAny(4, 4)
-        g = MeetRow(0, 5)
-        h = MeetAny(0, 3)
-        C = [a b c d e f g h] .== [a;b;c;d;e;f;g;h]
-        @test C == [1 0 0 0 0 0 0 0
-                    0 1 0 0 0 0 0 0
-                    0 0 1 0 0 0 0 0
-                    0 0 0 1 1 1 0 0
-                    0 0 0 1 1 1 0 0
-                    0 0 0 1 1 1 0 0
-                    0 0 0 0 0 0 1 1
-                    0 0 0 0 0 0 1 1]
+        g = HardRealTime()
+        h = MeetRow(0, 5)
+        i = MeetAny(0, 3)
+        j = BestEffort()
+        C = [a b c d e f g h i j] .== [a;b;c;d;e;f;g;h;i;j]
+        @test C == [1 0 0 0 0 0 0 0 0 0
+                    0 1 0 0 0 0 0 0 0 0
+                    0 0 1 0 0 0 0 0 0 0
+                    0 0 0 1 1 1 1 0 0 0
+                    0 0 0 1 1 1 1 0 0 0
+                    0 0 0 1 1 1 1 0 0 0
+                    0 0 0 1 1 1 1 0 0 0
+                    0 0 0 0 0 0 0 1 1 1
+                    0 0 0 0 0 0 0 1 1 1
+                    0 0 0 0 0 0 0 1 1 1]
     end
 end

@@ -94,6 +94,26 @@ end
 
 MissRow(miss::T) where {T<:Integer} = MissRow{T}(miss)
 
+"""
+    HardRealTime{T}()
+
+Weakly hard constraint specifying that no deadlines may be missed.
+"""
+struct HardRealTime{T} <: WeaklyHardConstraint{T}
+end
+
+HardRealTime() = HardRealTime{Int}()
+
+"""
+    BestEffort{T}()
+
+Weakly hard constraint specifying that any pattern of deadline misses is acceptable.
+"""
+struct BestEffort{T} <: WeaklyHardConstraint{T}
+end
+
+BestEffort() = BestEffort{Int}()
+
 
 Base.show(io::IO, ::MIME"text/latex", c::MeetAny) = print(io, "\\genfrac{(}{)}{0pt}{}{$(c.meet)}{$(c.window)}")
 Base.show(io::IO, ::MIME"text/latex", c::MeetRow) = print(io, "\\genfrac{\\langle}{\\rangle}{0pt}{}{$(c.meet)}{$(c.window)}")
@@ -103,6 +123,8 @@ Base.show(io::IO, ::MIME"application/x-latex", c::WeaklyHardConstraint) = show(i
 import Base.==
 # Try swapping arguments for unspecified methods
 ==(c::WeaklyHardConstraint, d::WeaklyHardConstraint) = d == c
+==(_::HardRealTime, d::WeaklyHardConstraint) = d == MissRow(0)
+==(_::BestEffort, d::WeaklyHardConstraint) = d == MeetAny(0,1)
 # Comparisons of same type
 ==(c::MeetRow, d::MeetRow) = (2*c.meet > c.window && 2*d.meet > d.window) || (c.meet == d.meet && c.window == d.window)
 ==(c::MeetAny, d::MeetAny) = (c.meet == 0 && d.meet == 0) || (c.meet == d.meet && c.window == d.window)
