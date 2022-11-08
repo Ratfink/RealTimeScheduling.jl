@@ -127,6 +127,7 @@ Base.show(io::IO, ::MIME"application/x-latex", c::WeaklyHardConstraint) = show(i
 import Base.==
 # Try swapping arguments for unspecified methods
 ==(c::WeaklyHardConstraint, d::WeaklyHardConstraint) = d == c
+# HardRealTime and BestEffort allow no misses or any pattern, respectively
 ==(_::HardRealTime, d::WeaklyHardConstraint) = d == MissRow(0)
 ==(_::BestEffort, d::WeaklyHardConstraint) = d == MeetAny(0,1)
 # Comparisons of same type
@@ -139,6 +140,13 @@ import Base.==
 ==(c::MeetRow, d::MissRow) = (2*c.meet > c.window && d.miss == 0)
 
 import Base.<=
+# HardRealTime is the smallest (hardest) constraint
+<=(c::WeaklyHardConstraint, d::HardRealTime) = c == d
+<=(_::HardRealTime, _::WeaklyHardConstraint) = true
+# BestEffort is the largest (easiest) constraint
+<=(_::WeaklyHardConstraint, _::BestEffort) = true
+<=(c::BestEffort, d::WeaklyHardConstraint) = c == d
+# Due to Bernat, Burns, and Llamosí
 <=(c::MeetAny, d::MeetAny) = d.meet <= maximum([floor(d.window/c.window) * c.meet, d.window + ceil(d.window/c.window) * (c.meet - c.window)])
 <=(c::MeetRow, d::MeetRow) = (d.window < c.window && d.meet <= c.meet - ceil((c.window - d.window)/2)) || (d.window >= c.window && d.meet <= c.meet)
 <=(c::MissRow, d::MissRow) = c.miss <= d.miss
