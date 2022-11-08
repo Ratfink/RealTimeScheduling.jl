@@ -77,6 +77,70 @@ Base.promote_rule(::Type{PeriodicTask{T}}, ::Type{PeriodicTask{S}}) where {T<:Re
 Base.promote_rule(::Type{PeriodicTask{T}}, ::Type{PeriodicImplicitTask{S}}) where {T<:Real, S<:Real} = PeriodicTask{promote_type(T, S)}
 Base.promote_rule(::Type{PeriodicImplicitTask{T}}, ::Type{PeriodicImplicitTask{S}}) where {T<:Real, S<:Real} = PeriodicImplicitTask{promote_type(T, S)}
 
+"""
+    PeriodicWeaklyHardTask{S, R}(period::S, deadline::S, cost::S, constraint::R)
+
+Concrete type for periodic tasks with a weakly hard constraint.
+"""
+struct PeriodicWeaklyHardTask{S,R} <: AbstractRealTimeTask{S} where {R<:WeaklyHardConstraint}
+    """
+    The period, or interrelease time
+    """
+    T::S
+    """
+    The relative deadline
+    """
+    D::S
+    """
+    The cost, or worst-case execution time (WCET)
+    """
+    C::S
+    """
+    The weakly hard constraint the task must satisfy for correct execution
+    """
+    constraint::R
+end
+
+period(τ::PeriodicWeaklyHardTask) = τ.T
+deadline(τ::PeriodicWeaklyHardTask) = τ.D
+cost(τ::PeriodicWeaklyHardTask) = τ.C
+constraint(τ::PeriodicWeaklyHardTask) = τ.constraint
+
+"""
+    min_utilization(τ::PeriodicWeaklyHardTask)
+
+Compute the minimum utilization of weakly hard real-time task `τ`, representing the
+utilization of the task if as few jobs as possible are executed.
+
+See also [`utilization`](@ref), [`density`](@ref), and [`min_density`](@ref).
+"""
+min_utilization(τ::PeriodicWeaklyHardTask{<:Real,<:MeetAny}) = utilization(τ) * constraint(τ).meet / constraint(τ).window
+min_utilization(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MeetAny}) = utilization(τ) * constraint(τ).meet // constraint(τ).window
+min_utilization(τ::PeriodicWeaklyHardTask{<:Real,<:MeetRow}) = utilization(τ) * min((2*constraint(τ).meet - 1) / constraint(τ).window, 1)
+min_utilization(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MeetRow}) = utilization(τ) * min((2*constraint(τ).meet - 1) // constraint(τ).window, 1)
+min_utilization(τ::PeriodicWeaklyHardTask{<:Real,<:MissRow}) = utilization(τ) / (constraint(τ).miss + 1)
+min_utilization(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MissRow}) = utilization(τ) // (constraint(τ).miss + 1)
+min_utilization(τ::PeriodicWeaklyHardTask{<:Real,<:HardRealTime}) = utilization(τ)
+min_utilization(τ::PeriodicWeaklyHardTask{<:Real,<:BestEffort}) = 0
+
+"""
+    min_density(τ::PeriodicWeaklyHardTask)
+
+Compute the minimum density of weakly hard real-time task `τ`, representing the
+density of the task if as few jobs as possible are executed.
+
+See also [`utilization`](@ref), [`density`](@ref), and [`min_utilization`](@ref).
+"""
+min_density(τ::PeriodicWeaklyHardTask{<:Real,<:MeetAny}) = density(τ) * constraint(τ).meet / constraint(τ).window
+min_density(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MeetAny}) = density(τ) * constraint(τ).meet // constraint(τ).window
+min_density(τ::PeriodicWeaklyHardTask{<:Real,<:MeetRow}) = density(τ) * min((2*constraint(τ).meet - 1) / constraint(τ).window, 1)
+min_density(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MeetRow}) = density(τ) * min((2*constraint(τ).meet - 1) // constraint(τ).window, 1)
+min_density(τ::PeriodicWeaklyHardTask{<:Real,<:MissRow}) = density(τ) / (constraint(τ).miss + 1)
+min_density(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MissRow}) = density(τ) // (constraint(τ).miss + 1)
+min_density(τ::PeriodicWeaklyHardTask{<:Real,<:HardRealTime}) = density(τ)
+min_density(τ::PeriodicWeaklyHardTask{<:Real,<:BestEffort}) = 0
+
+
 
 """
     implicit_deadline(τ::AbstractRealTimeTask)
@@ -99,7 +163,7 @@ Compute the utilization of real-time task `τ`, cost/period.
 
 See also [`density`](@ref).
 """
-utilization(τ::AbstractRealTimeTask) = cost(τ)/ period(τ)
+utilization(τ::AbstractRealTimeTask) = cost(τ) / period(τ)
 utilization(τ::AbstractRealTimeTask{<:Union{Integer, Rational}}) = cost(τ) // period(τ)
 
 """

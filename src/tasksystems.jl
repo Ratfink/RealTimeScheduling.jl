@@ -79,6 +79,20 @@ Return the sum density of all tasks in `T`.
 density(T::AbstractRealTimeTaskSystem) = sum(density, T)
 
 """
+    min_utilization(T::AbstractRealTimeTaskSystem)
+
+Return the sum min_utilization of all tasks in `T`.
+"""
+min_utilization(T::AbstractRealTimeTaskSystem) = sum(min_utilization, T)
+
+"""
+    min_density(T::AbstractRealTimeTaskSystem)
+
+Return the sum min_density of all tasks in `T`.
+"""
+min_density(T::AbstractRealTimeTaskSystem) = sum(min_density, T)
+
+"""
     feasible(T::AbstractRealTimeTaskSystem)
 
 Test whether the real-time task system `T` is feasible, i.e. its density is at most 1.

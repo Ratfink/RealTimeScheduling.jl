@@ -3,13 +3,17 @@ module RealTimeScheduling
 export AbstractRealTimeTask,
        PeriodicTask,
        PeriodicImplicitTask,
+       PeriodicWeaklyHardTask,
        period,
        deadline,
        cost,
+       constraint,
        implicit_deadline,
        constrained_deadline,
        utilization,
        density,
+       min_utilization,
+       min_density,
        feasible,
        demand_bound,
        request_bound,
@@ -29,9 +33,9 @@ export AbstractRealTimeTask,
        SamplerUniformMissRow,
        # Schedulability tests
        schedulable_fixed_priority
+include("weaklyhard.jl")
 include("tasks.jl")
 include("tasksystems.jl")
-include("weaklyhard.jl")
 include("schedulability.jl")
 
 end

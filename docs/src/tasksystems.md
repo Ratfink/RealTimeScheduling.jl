@@ -24,6 +24,8 @@ It's just as easy to compute the utilization or density of a task system.
 ```@docs
 utilization(::AbstractRealTimeTaskSystem)
 density(::AbstractRealTimeTaskSystem)
+min_utilization(::PeriodicWeaklyHardTask)
+min_density(::PeriodicWeaklyHardTask)
 ```
 
 Additionally, it's often a sensible check to verify that a task system is

@@ -2,11 +2,13 @@
 
 RealTimeScheduling provides several different representations of real-time
 tasks.  These include periodic tasks with implicit or explicit deadlines.
+Periodic tasks with weakly hard constraints are also supported.
 
 ```@docs
 AbstractRealTimeTask
 PeriodicTask
 PeriodicImplicitTask
+PeriodicWeaklyHardTask
 ```
 
 The task types can be converted to one another automatically, and
@@ -30,6 +32,15 @@ Utilization and density can be computed easily as well.
 ```@docs
 utilization(::AbstractRealTimeTask)
 density(::AbstractRealTimeTask)
+```
+
+For weakly hard tasks, the minimum utilization and density may also be
+computed, multiplying the utilization and density by the maximum fraction of
+jobs that can be missed in an unbounded time horizon.
+
+```@docs
+min_utilization(::PeriodicWeaklyHardTask)
+min_density(::PeriodicWeaklyHardTask)
 ```
 
 ## Testing Properties of Tasks
