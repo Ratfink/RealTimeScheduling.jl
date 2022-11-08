@@ -114,6 +114,7 @@ utilization of the task if as few jobs as possible are executed.
 
 See also [`utilization`](@ref), [`density`](@ref), and [`min_density`](@ref).
 """
+min_utilization(_::PeriodicWeaklyHardTask) = throw(MethodError(min_utilization, "Not implemented for this constraint"))
 min_utilization(τ::PeriodicWeaklyHardTask{<:Real,<:MeetAny}) = utilization(τ) * constraint(τ).meet / constraint(τ).window
 min_utilization(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MeetAny}) = utilization(τ) * constraint(τ).meet // constraint(τ).window
 min_utilization(τ::PeriodicWeaklyHardTask{<:Real,<:MeetRow}) = utilization(τ) * min((2*constraint(τ).meet - 1) / constraint(τ).window, 1)
@@ -131,6 +132,7 @@ density of the task if as few jobs as possible are executed.
 
 See also [`utilization`](@ref), [`density`](@ref), and [`min_utilization`](@ref).
 """
+min_density(_::PeriodicWeaklyHardTask) = throw(MethodError(min_density, "Not implemented for this constraint"))
 min_density(τ::PeriodicWeaklyHardTask{<:Real,<:MeetAny}) = density(τ) * constraint(τ).meet / constraint(τ).window
 min_density(τ::PeriodicWeaklyHardTask{<:Union{Integer, Rational},<:MeetAny}) = density(τ) * constraint(τ).meet // constraint(τ).window
 min_density(τ::PeriodicWeaklyHardTask{<:Real,<:MeetRow}) = density(τ) * min((2*constraint(τ).meet - 1) / constraint(τ).window, 1)
