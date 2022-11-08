@@ -9,6 +9,10 @@ No. 4, April 2001.
 """
 abstract type WeaklyHardConstraint{T <: Integer} end
 
+Base.length(_::WeaklyHardConstraint) = 1
+Base.iterate(c::WeaklyHardConstraint) = (c, nothing)
+Base.iterate(_::WeaklyHardConstraint, _) = nothing
+
 """
     MeetAny{T}(meet::T, window::T)
 

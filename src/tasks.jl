@@ -3,6 +3,10 @@ Abstract parent type of all real-time task types
 """
 abstract type AbstractRealTimeTask{S <: Real} end
 
+Base.length(_::AbstractRealTimeTask) = 1
+Base.iterate(τ::AbstractRealTimeTask) = (τ, nothing)
+Base.iterate(_::AbstractRealTimeTask, _) = nothing
+
 """
     PeriodicTask{S}(period::S, deadline::S, cost::S)
 

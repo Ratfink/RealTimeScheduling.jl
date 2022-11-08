@@ -19,8 +19,8 @@
         @test !implicit_deadline(τ_1)
         @test constrained_deadline(τ_1)
         @test feasible(τ_1)
-        @test [demand_bound(τ_1, t) for t in -2:8] == [0, 0, 0, 0, 0, 2, 2, 2, 2, 4, 4]
-        @test [request_bound(τ_1, t) for t in -2:8] == [0, 0, 0, 2, 2, 2, 2, 4, 4, 4, 4]
+        @test demand_bound.(τ_1, -2:8) == [0, 0, 0, 0, 0, 2, 2, 2, 2, 4, 4]
+        @test request_bound.(τ_1, -2:8) == [0, 0, 0, 2, 2, 2, 2, 4, 4, 4, 4]
 
         @test implicit_deadline(τ_2)
         @test constrained_deadline(τ_2)
