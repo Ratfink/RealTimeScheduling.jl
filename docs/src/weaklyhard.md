@@ -10,17 +10,14 @@ RealTimeScheduling provides basic support for weakly hard constraints.
 Constraints that are logically equivalent compare as equal:
 
 ```@jldoctest
-julia> MeetAny(1, 1) == MissRow(0)
+julia> MeetAny(1, 1) == MeetRow(3, 5) == MissRow(0) == HardRealTime()
 true
 
-julia> MeetAny(1, 1) == MeetRow(3, 5)
+julia> MeetRow(0, 0) == MeetAny(0, 0) == BestEffort()
 true
 
-julia> MeetRow(0, 0) == MeetAny(0, 0)
-true
-
-julia> MeetRow(4, 5) == MeetRow(3, 5)
-true
+julia> MeetRow(4, 5) == MeetRow(2, 5)
+false
 ```
 
 

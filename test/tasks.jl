@@ -7,6 +7,12 @@
     τ_f4 = PeriodicImplicitTask{Float64}(5, 2)
     τ_wh1 = PeriodicWeaklyHardTask(5, 3, 2, MeetAny(3, 5))
     τ_whf1 = PeriodicWeaklyHardTask(5., 3., 2., MeetAny(3, 5))
+    τ_wh2 = PeriodicWeaklyHardTask(5, 3, 2, MeetAny(0, 0))
+    τ_whf2 = PeriodicWeaklyHardTask(5., 3., 2., MeetAny(0, 0))
+    τ_wh3 = PeriodicWeaklyHardTask(5, 3, 2, MeetRow(0, 0))
+    τ_whf3 = PeriodicWeaklyHardTask(5., 3., 2., MeetRow(0, 0))
+    τ_wh4 = PeriodicWeaklyHardTask(5, 3, 2, MeetRow(0, 4))
+    τ_whf4 = PeriodicWeaklyHardTask(5., 3., 2., MeetRow(0, 4))
     @testset "PeriodicTask" begin
         @test_throws TypeError PeriodicTask{ComplexF64}(4, 3, 2)
         @test period(τ_1) == 4
@@ -61,11 +67,35 @@
         @test min_utilization(τ_wh1) == 6//25
         @test min_density(τ_wh1) isa Rational{Int64}
         @test min_density(τ_wh1) == 6//15
+        @test min_utilization(τ_wh2) isa Rational{Int64}
+        @test min_utilization(τ_wh2) == 0
+        @test min_density(τ_wh2) isa Rational{Int64}
+        @test min_density(τ_wh2) == 0
+        @test min_utilization(τ_wh3) isa Rational{Int64}
+        @test min_utilization(τ_wh3) == 0
+        @test min_density(τ_wh3) isa Rational{Int64}
+        @test min_density(τ_wh3) == 0
+        @test min_utilization(τ_wh4) isa Rational{Int64}
+        @test min_utilization(τ_wh4) == 0
+        @test min_density(τ_wh4) isa Rational{Int64}
+        @test min_density(τ_wh4) == 0
 
         @test min_utilization(τ_whf1) isa Float64
         @test min_utilization(τ_whf1) ≈ 0.24
         @test min_density(τ_whf1) isa Float64
         @test min_density(τ_whf1) ≈ 0.4
+        @test min_utilization(τ_whf2) isa Float64
+        @test min_utilization(τ_whf2) == 0.0
+        @test min_density(τ_whf2) isa Float64
+        @test min_density(τ_whf2) == 0.0
+        @test min_utilization(τ_whf3) isa Float64
+        @test min_utilization(τ_whf3) == 0.0
+        @test min_density(τ_whf3) isa Float64
+        @test min_density(τ_whf3) == 0.0
+        @test min_utilization(τ_whf4) isa Float64
+        @test min_utilization(τ_whf4) == 0.0
+        @test min_density(τ_whf4) isa Float64
+        @test min_density(τ_whf4) == 0.0
     end
     @testset "Periodic[Implicit]Task conversion" begin
         @test convert(PeriodicTask{Float64}, τ_1) == τ_f1
