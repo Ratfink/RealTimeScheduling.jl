@@ -48,14 +48,18 @@
         bv[1,2] = BitVector([0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1])
         bv[1,3] = BitVector([0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1])
         bv[1,4] = BitVector([0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1])
-        S = satisfies.(bv, [a;b;c])
+        S = satisfies.(bv, [a;b;c;g;j])
         @test S == [1 1 1 0
                     1 0 0 0
-                    1 1 0 0]
-        S = bv .⊢ [a;b;c]
+                    1 1 0 0
+                    0 0 0 0
+                    1 1 1 1]
+        S = bv .⊢ [a;b;c;g;j]
         @test S == [1 1 1 0
                     1 0 0 0
-                    1 1 0 0]
+                    1 1 0 0
+                    0 0 0 0
+                    1 1 1 1]
     end
     @testset "Random generation" begin
         # Test that all samples satisfy the constraint
