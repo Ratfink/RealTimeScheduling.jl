@@ -43,6 +43,7 @@ HardRealTime
 BestEffort
 satisfies
 ⊢
+⊬
 ```
 
 ## Sampling from Weakly Hard Constraints

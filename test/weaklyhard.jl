@@ -60,6 +60,12 @@
                     1 1 0 0
                     0 0 0 0
                     1 1 1 1]
+        S = bv .⊬ [a;b;c;g;j]
+        @test S == [0 0 0 1
+                    0 1 1 1
+                    0 0 1 1
+                    1 1 1 1
+                    0 0 0 0]
     end
     @testset "Random generation" begin
         # Test that all samples satisfy the constraint

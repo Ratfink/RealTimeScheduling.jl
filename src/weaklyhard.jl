@@ -244,6 +244,11 @@ Check that the `BitVector` `bv` satisfies the weakly hard constraint given by `c
 satisfies(_::BitVector, c::WeaklyHardConstraint{<:Integer}) = throw(MethodError(satisfies, (typeof(c))))
 @doc (@doc satisfies)
 ⊢(bv::BitVector, c::WeaklyHardConstraint) = satisfies(bv, c)
+"""
+    ⊬(bv::BitVector, c::WeaklyHardConstraint)
+
+Check that the `BitVector` `bv` does *not* satisfy the weakly hard constraint given by `c`.
+"""
 ⊬(bv::BitVector, c::WeaklyHardConstraint) = !satisfies(bv, c)
 # First, the trivial methods
 satisfies(bv::BitVector, _::HardRealTime) = all(bv)

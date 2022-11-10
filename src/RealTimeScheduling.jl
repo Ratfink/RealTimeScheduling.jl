@@ -33,6 +33,7 @@ export AbstractRealTimeTask,
        SamplerUniformMissRow,
        satisfies,
        ⊢,
+       ⊬,
        # Schedulability tests
        schedulable_fixed_priority
 include("weaklyhard.jl")
