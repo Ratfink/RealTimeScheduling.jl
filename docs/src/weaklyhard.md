@@ -7,7 +7,8 @@ RealTimeScheduling provides basic support for weakly hard constraints.
     still very incomplete.  For now, we mainly support the constraints
     themselves, as well as comparisons between them.
 
-Constraints that are logically equivalent compare as equal:
+Constraints that are logically equivalent compare as equal, even if they are
+represented differently.
 
 ```@jldoctest
 julia> MeetAny(1, 1) == MeetRow(3, 5) == MissRow(0) == HardRealTime()
@@ -20,6 +21,17 @@ julia> MeetRow(4, 5) == MeetRow(2, 5)
 false
 ```
 
+Testing whether a `BitVector` satisfies a [`WeaklyHardConstraint`](@ref) is
+supported.
+
+```@jldoctest
+julia> BitVector([0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1]) ⊢ MeetRow(2, 5)
+true
+
+julia> BitVector([0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1]) ⊢ MeetRow(2, 5)
+false
+```
+
 
 ```@docs
 WeaklyHardConstraint
@@ -29,6 +41,9 @@ MeetRow
 MissRow
 HardRealTime
 BestEffort
+satisfies
+⊢
+⊬
 ```
 
 ## Sampling from Weakly Hard Constraints
