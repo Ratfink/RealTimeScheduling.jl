@@ -232,3 +232,66 @@ function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
     a = falses(sp.H)
     Random.rand!(rng, a, sp)
 end
+
+
+# Satisfaction
+"""
+    satisfies(bv::BitVector, c::WeaklyHardConstraint)
+    ⊢(bv::BitVector, c::WeaklyHardConstraint)
+
+Check that the `BitVector` `bv` satisfies the weakly hard constraint given by `c`.
+"""
+satisfies(_::BitVector, c::WeaklyHardConstraint{<:Integer}) = throw(MethodError(satisfies, (typeof(c))))
+@doc (@doc satisfies)
+⊢(bv::BitVector, c::WeaklyHardConstraint) = satisfies(bv, c)
+# First, the trivial methods
+satisfies(bv::BitVector, _::HardRealTime) = all(bv)
+satisfies(_::BitVector, _::BestEffort) = true
+# For MissRow, check that it doesn't contain one miss too many in a row
+function satisfies(bv::BitVector, c::MissRow)
+    @boundscheck length(bv) >= c.miss || throw(ArgumentError("bv must be at least as long as c.miss"))
+    misses = 0
+    for b in bv
+        if !b
+            misses += 1
+            misses <= c.miss || return false
+        else
+            misses = 0
+        end
+    end
+    true
+end
+# For MeetAny, check that all windows contain enough hits
+function satisfies(bv::BitVector, c::MeetAny)
+    @boundscheck length(bv) >= c.window || throw(ArgumentError("bv must be at least as long as c.window"))
+    # Initialize our counter
+    meets = count(bv[1:c.window])
+    meets >= c.meet || return false
+    # Check that there are at least c.meet deadlines met in each c.window
+    for i in 1:(length(bv) - c.window)
+        meets += bv[i + c.window] - bv[i]
+        meets >= c.meet || return false
+    end
+    true
+end
+# For MeetRow, check that all windows contain a run of hits
+function satisfies(bv::BitVector, c::MeetRow)
+    @boundscheck length(bv) >= c.window || throw(ArgumentError("bv must be at least as long as c.window"))
+    # Initialize
+    meets = 0
+    safe = c.window - 1
+    # Check that there is a row of at least c.meet deadlines met in each c.window
+    for i in eachindex(bv)
+        if bv[i]
+            meets += 1
+            if meets >= c.meet
+                safe = i + c.window - c.meet
+                safe < length(bv) || return true
+            end
+        else
+            meets = 0
+            i <= safe - c.meet + 1 || return false
+        end
+    end
+    return true
+end
