@@ -35,14 +35,13 @@ function tardiness_gedf(T::TaskSystem{<:PeriodicImplicitTask}, m::Integer, ::GED
     Λ = ceil(typeof(m), utilization(T)) - 1
     ϵ = sort(T, by=cost, rev=true)
     μ = sort(T, by=utilization, rev=true)
-    if Λ >= 2
-        x = (sum(cost, ϵ[1:Λ]) - cost(ϵ[end])) / (m - sum(utilization, μ[1:Λ-1]))
+    if Λ == 0
+        # If Λ == 0, utilization(T) <= 1, so EDF is optimal
+        return 0.0
     elseif Λ == 1
         x = (sum(cost, ϵ[1:Λ]) - cost(ϵ[end])) / m
     else
-        @info Λ
-        # If Λ == 0, utilization(T) <= 1, so EDF is optimal
-        return 0.0
+        x = (sum(cost, ϵ[1:Λ]) - cost(ϵ[end])) / (m - sum(utilization, μ[1:Λ-1]))
     end
     return x .+ cost.(T)
 end
