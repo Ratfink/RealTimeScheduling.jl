@@ -35,10 +35,15 @@ export AbstractRealTimeTask,
        ⊢,
        ⊬,
        # Schedulability tests
-       schedulable_fixed_priority
+       schedulable_fixed_priority,
+       # Response time calculation
+       GEDFDeviAnderson,
+       response_time_gedf,
+       tardiness_gedf
 include("weaklyhard.jl")
 include("tasks.jl")
 include("tasksystems.jl")
 include("schedulability.jl")
+include("responsetime.jl")
 
 end
