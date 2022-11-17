@@ -38,6 +38,7 @@ export AbstractRealTimeTask,
        schedulable_fixed_priority,
        # Response time calculation
        GEDFDeviAnderson,
+       GEDFCompliantVector,
        response_time_gedf,
        tardiness_gedf
 include("weaklyhard.jl")

@@ -1,6 +1,7 @@
 abstract type GEDFAlgorithm end
 
 struct GEDFDeviAndersonAlg <: GEDFAlgorithm end
+struct GEDFCompliantVectorAlg <: GEDFAlgorithm end
 
 """
     GEDFDeviAnderson
@@ -10,6 +11,15 @@ Indicate that a response time bound should be computed according to Devi and And
 DOI: https://doi.org/10.1007/s11241-007-9042-1
 """
 const GEDFDeviAnderson = GEDFDeviAndersonAlg()
+
+"""
+    GEDFCompliantVector
+
+Indicate that a response time bound should be computed according to Erickson, Devi, and
+Baruah, "Improved Tardiness Bounds for Global EDF."
+DOI: https://doi.org/10.1109/ECRTS.2010.25
+"""
+const GEDFCompliantVector = GEDFCompliantVectorAlg()
 
 """
     response_time_gedf(T, m, alg)
