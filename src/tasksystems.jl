@@ -1,3 +1,6 @@
+using Distributions
+
+
 """
 Abstract parent type of all real-time task system types
 """
@@ -56,6 +59,7 @@ function Base.similar(T::TaskSystem{S}, element_type::Type{U}=eltype(T), dims::T
         Array{element_type}(undef, dims)
     end
 end
+Base.resize!(T::TaskSystem, i::Integer) = resize!(T.tasks, i)
 
 """
     implicit_deadline(T::AbstractRealTimeTaskSystem)
@@ -76,28 +80,28 @@ constrained_deadline(T::AbstractRealTimeTaskSystem) = all(constrained_deadline, 
 
 Return the sum utilization of all tasks in `T`.
 """
-utilization(T::AbstractRealTimeTaskSystem) = sum(utilization, T)
+utilization(T::AbstractRealTimeTaskSystem) = sum(utilization, T, init=0)
 
 """
     density(T::AbstractRealTimeTaskSystem)
 
 Return the sum density of all tasks in `T`.
 """
-density(T::AbstractRealTimeTaskSystem) = sum(density, T)
+density(T::AbstractRealTimeTaskSystem) = sum(density, T, init=0)
 
 """
     min_utilization(T::AbstractRealTimeTaskSystem)
 
 Return the sum min_utilization of all tasks in `T`.
 """
-min_utilization(T::AbstractRealTimeTaskSystem) = sum(min_utilization, T)
+min_utilization(T::AbstractRealTimeTaskSystem) = sum(min_utilization, T, init=0)
 
 """
     min_density(T::AbstractRealTimeTaskSystem)
 
 Return the sum min_density of all tasks in `T`.
 """
-min_density(T::AbstractRealTimeTaskSystem) = sum(min_density, T)
+min_density(T::AbstractRealTimeTaskSystem) = sum(min_density, T, init=0)
 
 """
     feasible(T::AbstractRealTimeTaskSystem)
@@ -125,11 +129,41 @@ deadline_monotonic!(T::AbstractRealTimeTaskSystem) = sort!(T, by=deadline)
 
 Compute Baruah's demand bound function (DBF) for task system `T`.
 """
-demand_bound(T::AbstractRealTimeTaskSystem, t::Real) = sum(τ -> demand_bound(τ, t), T)
+demand_bound(T::AbstractRealTimeTaskSystem, t::Real) = sum(τ -> demand_bound(τ, t), T, init=0)
 
 """
     request_bound(T::AbstractRealTimeTaskSystem, t)
 
 Compute the request bound function (RBF) for task system `T`.
 """
-request_bound(T::AbstractRealTimeTaskSystem, t::Real) = sum(τ -> request_bound(τ, t), T)
+request_bound(T::AbstractRealTimeTaskSystem, t::Real) = sum(τ -> request_bound(τ, t), T, init=0)
+
+"""
+    randtasksystem([tasktype=PeriodicImplicitTask{Float64}], U::Real,
+                   utilization_dist::Univariate, period_dist::Univariate)
+
+Generate a random [`TaskSystem`](@ref) with utilization at most `U`.  Tasks are drawn one at a time
+with utilizations drawn from `utilization_dist`, and periods from `period_dist`.  The task
+system is returned once the next task generated would cause its utilization to exceed `U`.
+"""
+function randtasksystem(_::Type{PeriodicImplicitTask{S}}, U::Real, utilization_dist::UnivariateDistribution, period_dist::UnivariateDistribution) where {S <: Real}
+    T = TaskSystem{PeriodicImplicitTask{S}}(undef, 0)
+
+    while utilization(T) < U
+        u = rand(utilization_dist)
+        t = rand(period_dist)
+        c = t*u
+        if S <: Integer
+            t = round(S, t)
+            c = round(S, c)
+        end
+        append!(T, PeriodicImplicitTask{S}(t, c))
+    end
+
+    # Return all but the last task, so the utilization bound isn't exceeded
+    return T[begin:end-1]
+end
+
+function randtasksystem(U::Real, utilization_dist::UnivariateDistribution, period_dist::UnivariateDistribution)
+    randtasksystem(PeriodicImplicitTask{Float64}, U, utilization_dist, period_dist)
+end
