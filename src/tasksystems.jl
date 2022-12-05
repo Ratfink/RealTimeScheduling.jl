@@ -49,6 +49,13 @@ Base.iterate(T::TaskSystem, i) = iterate(T.tasks, i)
 Base.getindex(T::TaskSystem, i::Integer) = T.tasks[i]
 Base.getindex(T::TaskSystem, inds) = TaskSystem(getindex(T.tasks, inds))
 Base.setindex!(T::TaskSystem{S}, value::S, i::Integer) where {S <: AbstractRealTimeTask} = setindex!(T.tasks, value, i)
+function Base.similar(T::TaskSystem{S}, element_type::Type{U}=eltype(T), dims::Tuple{Vararg{Int64, N}}=size(T)) where {S <: AbstractRealTimeTask, U, N}
+    if element_type <: AbstractRealTimeTask && length(dims) == 1
+        TaskSystem{element_type}(undef, dims[1])
+    else
+        Array{element_type}(undef, dims)
+    end
+end
 
 """
     implicit_deadline(T::AbstractRealTimeTaskSystem)
