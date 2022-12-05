@@ -78,38 +78,42 @@ function tardiness_gedf(T::TaskSystem{<:AbstractRealTimeTask}, m::Integer, ::GED
         for j in 1:i-1
             if utilization(T[i]) != utilization(T[j])
                 push!(points, (_z(T[i], T[j]), T[i], T[j]))
+            else
+                push!(points, (0, T[i], T[j]))
             end
         end
     end
+    sort!(points, by=p -> p[1])
 
     z0 = 0
     pind = 1
     if pind <= length(points)
         z1, i, j = points[pind]
-        pid += 1
     else
         z1 = Inf
     end
 
-    _sumterm(τ, z=0) = utilization(τ) * (z - cost(τ) / m) + cost(τ)
+    _sumterm(τ) = utilization(τ) * (-cost(τ) / m) + cost(τ)
     Θ = sort(T, by=_sumterm, rev=true)[1:m0]
+    @info typeof(Θ)
+    @info "points" points
     zstar = 0
     while true
         @info "status" zstar z0 z1
-        zstar = ((_S(T) - sum(τ -> cost(τ) * (1 - utilization(τ) / m), Θ))
-                 / (sum(utilization, Θ) - m))
-        if z0 <= zstar <= z1
+        zstar = ((_S(T) - sum(cost, Θ) + sum(τ -> (utilization(τ) * cost(τ) / m), Θ))
+                 / (utilization(Θ) - m))
+        if z0 <= zstar <= z1 || z0 == z1 == Inf
             break
         elseif i ∈ Θ && j ∉ Θ && utilization(j) > utilization(i)
-            Θ[findfirst(task -> task == i, Θ)] = j
+            Θ[findfirst(task -> task === i, Θ)] = j
         end
         z0 = z1
         if pind <= length(points)
             z1, i, j = points[pind]
-            pind += 1
         else
             z1 = Inf
         end
+        pind += 1
     end
 
     return zstar .- cost.(T) ./ m .+ cost.(T)
