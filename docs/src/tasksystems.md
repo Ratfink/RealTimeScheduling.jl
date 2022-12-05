@@ -9,6 +9,15 @@ AbstractRealTimeTaskSystem
 TaskSystem
 ```
 
+## Generating Task Systems
+
+Task systems can be generated at random using common algorithms from the
+real-time literature.  This is useful for conducting schedulability studies.
+
+```@docs
+randtasksystem
+```
+
 ## Testing Properties of Task Systems
 
 As with individual tasks, it can be useful to check if *all* tasks in a task

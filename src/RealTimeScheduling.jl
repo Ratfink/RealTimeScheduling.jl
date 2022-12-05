@@ -22,6 +22,7 @@ export AbstractRealTimeTask,
        TaskSystem,
        rate_monotonic!,
        deadline_monotonic!,
+       randtasksystem,
        # Weakly-hard constraints
        WeaklyHardConstraint,
        MeetAny,
