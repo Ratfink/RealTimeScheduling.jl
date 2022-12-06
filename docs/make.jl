@@ -6,7 +6,14 @@ DocMeta.setdocmeta!(RealTimeScheduling, :DocTestSetup, :(using RealTimeSchedulin
 makedocs(
     sitename = "RealTimeScheduling",
     format = Documenter.HTML(),
-    modules = [RealTimeScheduling]
+    modules = [RealTimeScheduling],
+    pages = [
+        "index.md",
+        "tasks.md",
+        "tasksystems.md",
+        "responsetime.md",
+        "weaklyhard.md",
+    ]
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
