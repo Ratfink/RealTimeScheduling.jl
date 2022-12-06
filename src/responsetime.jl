@@ -38,7 +38,7 @@ end
     tardiness_gedf(T, m, ::GEDFDeviAndersonAlg)
 
 Compute tardiness bounds for each task in the [`TaskSystem`](@ref) `T` under GEDF
-scheduling on `m` processors, according to the `GEDFDeviAnderson` algorithm.
+scheduling on `m` processors, according to the [`GEDFDeviAnderson`](@ref) algorithm.
 """
 function tardiness_gedf(T::TaskSystem{<:PeriodicImplicitTask}, m::Integer, ::GEDFDeviAndersonAlg)
     m > 1 || throw(ArgumentError("m must be at least 2"))
@@ -63,7 +63,7 @@ end
     tardiness_gedf(T, m, ::GEDFCompliantVectorAlg)
 
 Compute tardiness bounds for each task in the [`TaskSystem`](@ref) `T` under GEDF
-scheduling on `m` processors, according to the `GEDFCompliantVector` algorithm.
+scheduling on `m` processors, according to the [`GEDFCompliantVector`](@ref) algorithm.
 """
 function tardiness_gedf(T::TaskSystem{<:AbstractRealTimeTask}, m::Integer, ::GEDFCompliantVectorAlg)
     m > 1 || throw(ArgumentError("m must be at least 2"))
