@@ -1,3 +1,7 @@
+using JuMP
+using Clp
+
+
 abstract type GEDFAlgorithm end
 
 struct GEDFDeviAndersonAlg <: GEDFAlgorithm end
@@ -15,9 +19,8 @@ const GEDFDeviAnderson = GEDFDeviAndersonAlg()
 """
     GEDFCompliantVector
 
-Indicate that a response time bound should be computed according to Erickson, Guan, and
-Baruah, "Tardiness Bounds for Global EDF with Deadlines Different from Periods."
-DOI: https://doi.org/10.1007/978-3-642-17653-1_22
+Indicate that a response time bound should be computed according to Erickson, "Managing
+Tardiness Bounds and Overload in Soft Real-Time Systems." ISBN: 978-1-321-14155-9
 """
 const GEDFCompliantVector = GEDFCompliantVectorAlg()
 
@@ -56,9 +59,6 @@ function tardiness_gedf(T::TaskSystem{<:PeriodicImplicitTask}, m::Integer, ::GED
     return x .+ cost.(T)
 end
 
-_S(τ::AbstractRealTimeTask) = cost(τ) * max(0, 1 − deadline(τ) / period(τ))
-_S(T::AbstractRealTimeTaskSystem) = sum(_S, T)
-
 """
     tardiness_gedf(T, m, ::GEDFCompliantVectorAlg)
 
@@ -70,51 +70,34 @@ function tardiness_gedf(T::TaskSystem{<:AbstractRealTimeTask}, m::Integer, ::GED
     utilization(T) <= m || throw(ArgumentError("T must be feasible on m processors"))
     utilization(T) > 1 || return zeros(length(T))
 
-    # Algorithm 1 from Erickson, Guan, and Baruah
-    m0 = ceil(Int, utilization(T))
-    _z(i, j) = (cost(i) + (cost(j)*utilization(j)) / m + (-cost(i)*utilization(i)) / m - cost(j)) / (utilization(j) - utilization(i))
-    points = Tuple{Float64, AbstractRealTimeTask, AbstractRealTimeTask}[]
-    for i in eachindex(T)
-        for j in 1:i-1
-            if utilization(T[i]) != utilization(T[j])
-                push!(points, (_z(T[i], T[j]), T[i], T[j]))
-            else
-                push!(points, (0, T[i], T[j]))
-            end
-        end
-    end
-    sort!(points, by=p -> p[1])
+    # Linear program from chapter 3 of Jeremy Erickson's dissertation
+    U⁺ = ceil(Int, utilization(T))
 
-    z0 = 0
-    pind = 1
-    if pind <= length(points)
-        z1, i, j = points[pind]
-    else
-        z1 = Inf
-    end
+    model = Model(Clp.Optimizer)
+    set_optimizer_attribute(model, "LogLevel", 0)
+    @variable(model, x[axes(T,1)])
+    @variable(model, S[axes(T,1)] >= 0)
+    @variable(model, S_sum)
+    @variable(model, G)
+    @variable(model, s)
+    @variable(model, b)
+    @variable(model, z[axes(T,1)] >= 0)
+    # Constraint set 3.1
+    @constraint(model, x .== (s .- cost.(T)) ./ m)
+    # Constraint set 3.2
+    @constraint(model, S .>= cost.(T) .* (1 .- deadline.(T) ./ period.(T)))
+    # Constraint set 3.3
+    @constraint(model, G == b * (U⁺ - 1) + sum(z))
+    @constraint(model, z .>= x .* utilization.(T) .+ cost.(T) .- S .- b)
+    # Constraint set 3.4
+    @constraint(model, S_sum == sum(S))
+    # Constraint set 3.5
+    @constraint(model, s >= G + S_sum)
+    # Objective
+    @objective(model, Min, s)
 
-    _sumterm(τ) = utilization(τ) * (-cost(τ) / m) + cost(τ)
-    Θ = sort(T, by=_sumterm, rev=true)[1:m0]
-    @info typeof(Θ)
-    @info "points" points
-    zstar = 0
-    while true
-        @info "status" zstar z0 z1
-        zstar = ((_S(T) - sum(cost, Θ) + sum(τ -> (utilization(τ) * cost(τ) / m), Θ))
-                 / (utilization(Θ) - m))
-        if z0 <= zstar <= z1 || z0 == z1 == Inf
-            break
-        elseif i ∈ Θ && j ∉ Θ && utilization(j) > utilization(i)
-            Θ[findfirst(task -> task === i, Θ)] = j
-        end
-        z0 = z1
-        if pind <= length(points)
-            z1, i, j = points[pind]
-        else
-            z1 = Inf
-        end
-        pind += 1
-    end
+    # Proven to always have a solution
+    optimize!(model)
 
-    return zstar .- cost.(T) ./ m .+ cost.(T)
+    return value.(x) + cost.(T)
 end
