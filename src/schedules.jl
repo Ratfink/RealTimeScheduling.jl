@@ -32,7 +32,7 @@ function Base.union(i::ExecInterval, j::ExecInterval)
         throw(ArgumentError("Cannot construct union of disjoint sets"))
     l = min(leftendpoint(i), leftendpoint(j))
     r = max(rightendpoint(i), rightendpoint(j))
-    ExecInterval(l, r, processor(i))
+    ExecInterval{typeof(l)}(l, r, processor(i))
 end
 
 
@@ -144,15 +144,87 @@ mutable struct RealTimeTaskSchedule{T} <: AbstractTaskSchedule{T}
     jobs::Vector{Vector{T}}
 end
 
-function schedule_gedf(release!, T::AbstractRealTimeTaskSystem, m::Int, time::Real)
-    # Create the schedule
-    sched = RealTimeTaskSchedule(T, Vector{Vector{JobOfTask{typeof(time), eltype(T)}}}(undef, length(T)))
-    # Initialize the job vectors as empty
-    for v in eachindex(sched.jobs)
-        sched.jobs[v] = JobOfTask{typeof(time), eltype(T)}[]
+"""
+    RealTimeTaskSchedule(T::Type, tasks::AbstractRealTimeTaskSystem)
+
+Create a [`RealTimeTaskSchedule{T}`](@ref) with an empty job list for each task.
+"""
+function RealTimeTaskSchedule(T::Type, tasks::AbstractRealTimeTaskSystem)
+    jobs = Vector{Vector{T}}(undef, length(tasks))
+    for v in eachindex(jobs)
+        jobs[v] = T[]
     end
-    # Scheduler's priority queue
-    pq = PriorityQueue{eltype(T), typeof(time)}()
+    RealTimeTaskSchedule{T}(tasks, jobs)
+end
+
+function schedule_gedf(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real)
+    timetype = typeof(endtime)
+    jobtype = JobOfTask{timetype, eltype(T)}
+    # Create the schedule
+    sched = RealTimeTaskSchedule(jobtype, T)
+    # Scheduler's ready queue
+    readyq = PriorityQueue{jobtype, timetype}()
+
+    time = timetype(0)
+    proc_jobs = Vector{Union{Nothing,jobtype}}(nothing, m)
+    while time < endtime
+        nexttime = endtime
+        # Release new jobs if needed
+        for (i, τ) in enumerate(T)
+            jobs = sched.jobs[i]
+            # If there is a non-empty current job, don't release a new one
+            next_rel = isempty(jobs) ? 0 : period(τ) + release(jobs[end])
+            if time < next_rel
+                nexttime = min(nexttime, next_rel)
+            end
+            if !isempty(jobs) && (time < next_rel
+                                  || sum(width.(exec(jobs[end]))) < cost(jobs[end]))
+                continue
+            end
+            # TODO make a function to create a job of a task, so this can be properly generic
+            j = jobtype(τ, next_rel, next_rel+deadline(τ), cost(τ), next_rel+deadline(τ), ExecInterval{timetype}[])
+            release!(j)
+            push!(jobs, j)
+            enqueue!(readyq, j, priority(j))
+        end
+        # Pick jobs to run and find next interesting time instant
+        for (proc, j) in enumerate(proc_jobs)
+            # Clear out any completed jobs
+            if j !== nothing && sum(width.(exec(j))) >= cost(j)
+                proc_jobs[proc] = nothing
+                j = nothing
+            end
+            # Pick new jobs for idle processors
+            if !isempty(readyq) && j === nothing
+                proc_jobs[proc] = dequeue!(readyq)
+                j = proc_jobs[proc]
+            # Replace lower priority jobs with ones from the queue
+            elseif !isempty(readyq) && priority(first(peek(readyq))) < priority(j)
+                enqueue!(readyq, j, priority(j))
+                proc_jobs[proc] = dequeue!(readyq)
+                j = proc_jobs[proc]
+            end
+            # Find the next interesting time instant
+            if j !== nothing
+                nexttime = min(nexttime, time+cost(j)-sum(width.(exec(j))))
+            end
+        end
+        # Schedule pending jobs
+        for (proc, j) in enumerate(proc_jobs)
+            if j === nothing
+                continue
+            end
+            interval = ExecInterval{timetype}(time, nexttime, proc)
+            try
+                exec(j)[end] = union(exec(j)[end], interval)
+            catch
+                push!(exec(j), interval)
+            end
+        end
+        # Advance to next interesting time instant
+        time = nexttime
+    end
+
     sched
 end
 
