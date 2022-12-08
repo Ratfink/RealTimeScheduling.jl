@@ -23,6 +23,20 @@ export AbstractRealTimeTask,
        rate_monotonic!,
        deadline_monotonic!,
        randtasksystem,
+       # Schedules
+       ExecInterval,
+       AbstractJob,
+       AbstractJobOfTask,
+       Job,
+       JobOfTask,
+       task,
+       release,
+       priority,
+       exec,
+       AbstractSchedule,
+       AbstractTaskSchedule,
+       RealTimeTaskSchedule,
+       schedule_gedf,
        # Weakly-hard constraints
        WeaklyHardConstraint,
        MeetAny,
@@ -45,6 +59,7 @@ export AbstractRealTimeTask,
 include("weaklyhard.jl")
 include("tasks.jl")
 include("tasksystems.jl")
+include("schedules.jl")
 include("schedulability.jl")
 include("responsetime.jl")
 
