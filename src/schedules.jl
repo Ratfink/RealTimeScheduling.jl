@@ -244,7 +244,7 @@ schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_gedf
             for ei in exec(j)
                 l, r = endpoints(ei)
                 @series begin
-                    subplot --> i
+                    subplot := i
                     label --> ""
                     seriestype := :shape
                     fillcolor --> processor(ei)
@@ -262,31 +262,31 @@ schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_gedf
             comp = total_exec == cost(j) ? maximum(rightendpoint.(exec(j))) : -1
             # Release
             @series begin
-                subplot --> i
+                subplot := i
                 label --> ""
                 seriestype := :path
                 linecolor --> :black
-                arrow --> true
+                arrow := true
                 [rel, rel], [0, 2]
             end
             # Deadline
             @series begin
-                subplot --> i
+                subplot := i
                 label --> ""
                 seriestype := :path
                 linecolor --> :black
-                arrow --> true
+                arrow := true
                 [dead, dead], [2, 0]
             end
             # Completion
             @series begin
-                subplot --> i
+                subplot := i
                 label --> ""
                 seriestype := :path
                 linecolor --> :black
-                markershape --> [:none, :hline]
+                markershape := [:none, :hline]
                 markeralpha --> [0, 1]
-                markerstrokewidth --> 2
+                markerstrokewidth --> 2*get(plotattributes, :linewidth, 1)
                 markerstrokecolor --> :black
                 markercolor --> :black
                 [comp, comp], [0, 2]
@@ -296,7 +296,7 @@ schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_gedf
     # Per-subplot settings
     for (i, τ) in enumerate(sched.tasks)
         @series begin
-            subplot --> i
+            subplot := i
             if i == length(sched.tasks)
                 xguide --> "Time"
             end
