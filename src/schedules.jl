@@ -73,7 +73,9 @@ Return the priority of job `j`.
 priority(::AbstractJob) = error("Implement priority")
 
 """
-Real-time job type.
+    Job{S}(release::S, deadline::S, cost::S, priority::S, exec::Vector{ExecInterval{S}}
+
+A real-time job with the given parameters, executing over the intervals in `exec`.
 """
 mutable struct Job{S} <: AbstractJob
     release::S
@@ -104,7 +106,10 @@ Return the task associated with job `j`.
 task(::AbstractJobOfTask) = error("Implement task")
 
 """
-Job of a real-time task.
+    JobOfTask{S, T}(task::T, release::S, deadline::S, cost::S, priority::S, exec::Vector{ExecInterval{S}}
+
+A real-time job of the given `task` with the given parameters, executing over the intervals
+in `exec`.
 """
 mutable struct JobOfTask{S <: Real, T} <: AbstractJobOfTask{T}
     task::T
@@ -138,6 +143,8 @@ Abstract supertype for all real-time schedules of task systems.
 abstract type AbstractTaskSchedule{T <: AbstractJobOfTask} <: AbstractSchedule{T} end
 
 """
+    RealTimeTaskSchedule{T}(tasks::AbstractRealTimeTaskSystem, jobs::Vector{Vector{T}})
+
 Schedule of a real-time task system.
 """
 mutable struct RealTimeTaskSchedule{T} <: AbstractTaskSchedule{T}
