@@ -158,7 +158,21 @@ function RealTimeTaskSchedule(T::Type, tasks::AbstractRealTimeTaskSystem)
     RealTimeTaskSchedule{T}(tasks, jobs)
 end
 
-function schedule_gedf(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real)
+"""
+    schedule_global(release!, T, m, endtime)
+
+Simulate a preemptive global schedule of task system `T` on `m` processors to the specified
+`endtime`.  When releasing a job, the function `release!(job)` is called, allowing
+arbitrary modifications to be made, enabling a wide variety of global schedulers to be
+implemented.  Two common examples are provided: [`schedule_gfp`](@ref) and
+[`schedule_gedf`](@ref).
+
+The `job` provided to `release!(job)` defaults to being released as early as possible (i.e.
+at time 0 or one period after the task's last job), and has the relative deadline and cost
+specified by the task.  The priority defaults to the task's index in `T`, with lower
+priority values being treated as higher priority by the scheduler.
+"""
+function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real)
     timetype = typeof(endtime)
     jobtype = JobOfTask{timetype, eltype(T)}
     # Create the schedule
@@ -182,8 +196,7 @@ function schedule_gedf(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime:
                                   || sum(width.(exec(jobs[end]))) < cost(jobs[end]))
                 continue
             end
-            # TODO make a function to create a job of a task, so this can be properly generic
-            j = jobtype(τ, next_rel, next_rel+deadline(τ), cost(τ), next_rel+deadline(τ), ExecInterval{timetype}[])
+            j = jobtype(τ, next_rel, next_rel+deadline(τ), cost(τ), i, ExecInterval{timetype}[])
             release!(j)
             push!(jobs, j)
             enqueue!(readyq, j, priority(j))
@@ -233,7 +246,28 @@ function schedule_gedf(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime:
     sched
 end
 
-schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_gedf(identity, T, m, time)
+"""
+    schedule_gfp(T, m, time)
+
+Simulate a preemptive global fixed priority (GFP) schedule of task system `T` on `m`
+processors for the specified `time`.  Tasks are prioritized by their index in `T`, lowest
+index first.
+
+See also [`schedule_global`](@ref) for more general global scheduling.
+"""
+schedule_gfp(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_global(identity, T, m, time)
+
+"""
+    schedule_gedf(T, m, time)
+
+Simulate a preemptive global earliest-deadline-first (GEDF) schedule of task system `T` on
+`m` processors for the specified `time`.
+
+See also [`schedule_global`](@ref) for more general global scheduling.
+"""
+schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_global(T, m, time) do j
+    j.priority = deadline(j)
+end
 
 @recipe function scheduleplot(sched::RealTimeTaskSchedule)
     endtime = maximum(rightendpoint.(Iterators.flatten(exec.(Iterators.flatten(sched.jobs)))))

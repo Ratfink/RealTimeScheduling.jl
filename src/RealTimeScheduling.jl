@@ -36,6 +36,8 @@ export AbstractRealTimeTask,
        AbstractSchedule,
        AbstractTaskSchedule,
        RealTimeTaskSchedule,
+       schedule_global,
+       schedule_gfp,
        schedule_gedf,
        # Weakly-hard constraints
        WeaklyHardConstraint,
