@@ -89,6 +89,11 @@ release(j::Job) = j.release
 deadline(j::Job) = j.deadline
 cost(j::Job) = j.cost
 priority(j::Job) = j.priority
+"""
+    exec(j::Job)
+
+Return the execution intervals of job `j`.
+"""
 exec(j::Job) = j.exec
 
 """
@@ -125,6 +130,11 @@ release(j::JobOfTask) = j.release
 deadline(j::JobOfTask) = j.deadline
 cost(j::JobOfTask) = j.cost
 priority(j::JobOfTask) = j.priority
+"""
+    exec(j::JobOfTask)
+
+Return the execution intervals of job `j`.
+"""
 exec(j::JobOfTask) = j.exec
 
 

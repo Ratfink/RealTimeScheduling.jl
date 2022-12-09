@@ -8,6 +8,27 @@ Base.iterate(τ::AbstractRealTimeTask) = (τ, nothing)
 Base.iterate(_::AbstractRealTimeTask, _) = nothing
 
 """
+    period(τ::AbstractRealTimeTask)
+
+Return the period of the real-time task `τ`.
+"""
+period(::AbstractRealTimeTask) = error("Implement period")
+
+"""
+    deadline(τ::AbstractRealTimeTask)
+
+Return the deadline of the real-time task `τ`.
+"""
+deadline(::AbstractRealTimeTask) = error("Implement deadline")
+
+"""
+    cost(τ::AbstractRealTimeTask)
+
+Return the cost, or worst-case execution time, of the real-time task `τ`.
+"""
+cost(::AbstractRealTimeTask) = error("Implement cost")
+
+"""
     PeriodicTask{S}(period::S, deadline::S, cost::S)
 
 Concrete type for periodic real-time tasks.
@@ -27,23 +48,8 @@ struct PeriodicTask{S} <: AbstractRealTimeTask{S}
     C::S
 end
 
-"""
-    period(τ)
-
-Return the period of the real-time task `τ`.
-"""
 period(τ::PeriodicTask) = τ.T
-"""
-    deadline(τ)
-
-Return the deadline of the real-time task `τ`.
-"""
 deadline(τ::PeriodicTask) = τ.D
-"""
-    cost(τ)
-
-Return the cost, or worst-case execution time, of the real-time task `τ`.
-"""
 cost(τ::PeriodicTask) = τ.C
 
 
