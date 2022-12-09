@@ -281,8 +281,10 @@ end
     layout --> (length(sched.tasks), 1)
     xlims --> (0, endtime)
     ylims --> (0, 2)
-    yticks --> false
+    ytickfontcolor --> "#00000000" # Workaround for guides getting cut off
+    yticks --> [0]
     xgrid --> false
+    ygrid --> false
     # First draw the execution intervals
     for (i, τ) in enumerate(sched.jobs)
         for j in τ
@@ -346,6 +348,7 @@ end
                 xguide --> "Time"
             end
             yguide --> "Task $i"
+            yguidefonthalign --> :left
             label --> ""
             [0], [0]
         end
