@@ -22,9 +22,9 @@ Of course, methods are provided to get a task's period, relative deadline, and
 execution cost.
 
 ```@docs
-period
-deadline
-cost
+period(::AbstractRealTimeTask)
+deadline(::AbstractRealTimeTask)
+cost(::AbstractRealTimeTask)
 ```
 
 Utilization and density can be computed easily as well.

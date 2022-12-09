@@ -11,6 +11,7 @@ makedocs(
         "index.md",
         "tasks.md",
         "tasksystems.md",
+        "schedules.md",
         "responsetime.md",
         "weaklyhard.md",
     ]
