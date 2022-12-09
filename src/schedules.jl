@@ -188,13 +188,17 @@ function schedule_gedf(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime:
             push!(jobs, j)
             enqueue!(readyq, j, priority(j))
         end
-        # Pick jobs to run and find next interesting time instant
+        # Clear out any completed jobs
         for (proc, j) in enumerate(proc_jobs)
             # Clear out any completed jobs
             if j !== nothing && sum(width.(exec(j))) >= cost(j)
                 proc_jobs[proc] = nothing
                 j = nothing
             end
+        end
+        # Pick jobs to run and find next interesting time instant
+        sortby(key) = key[2] === nothing ? typemax(timetype) : priority(key[2])
+        for (proc, j) in sort(collect(enumerate(proc_jobs)), by=sortby, rev=true)
             # Pick new jobs for idle processors
             if !isempty(readyq) && j === nothing
                 proc_jobs[proc] = dequeue!(readyq)
