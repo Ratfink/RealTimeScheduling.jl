@@ -1,5 +1,6 @@
 using DataStructures
 using IntervalSets
+using RecipesBase
 
 
 """
@@ -229,3 +230,79 @@ function schedule_gedf(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime:
 end
 
 schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_gedf(identity, T, m, time)
+
+@recipe function scheduleplot(sched::RealTimeTaskSchedule)
+    endtime = maximum(rightendpoint.(Iterators.flatten(exec.(Iterators.flatten(sched.jobs)))))
+    layout --> (length(sched.tasks), 1)
+    xlims --> (0, endtime)
+    ylims --> (0, 2)
+    yticks --> false
+    xgrid --> false
+    # First draw the execution intervals
+    for (i, τ) in enumerate(sched.jobs)
+        for j in τ
+            for ei in exec(j)
+                l, r = endpoints(ei)
+                @series begin
+                    subplot --> i
+                    label --> ""
+                    seriestype := :shape
+                    fillcolor --> processor(ei)
+                    [l, r, r, l], [0, 0, 1, 1]
+                end
+            end
+        end
+    end
+    # Then the release, deadline, and completion arrows
+    for (i, τ) in enumerate(sched.jobs)
+        for j in τ
+            rel = release(j)
+            dead = deadline(j)
+            total_exec = sum(width.(exec(j)))
+            comp = total_exec == cost(j) ? maximum(rightendpoint.(exec(j))) : -1
+            # Release
+            @series begin
+                subplot --> i
+                label --> ""
+                seriestype := :path
+                linecolor --> :black
+                arrow --> true
+                [rel, rel], [0, 2]
+            end
+            # Deadline
+            @series begin
+                subplot --> i
+                label --> ""
+                seriestype := :path
+                linecolor --> :black
+                arrow --> true
+                [dead, dead], [2, 0]
+            end
+            # Completion
+            @series begin
+                subplot --> i
+                label --> ""
+                seriestype := :path
+                linecolor --> :black
+                markershape --> [:none, :hline]
+                markeralpha --> [0, 1]
+                markerstrokewidth --> 2
+                markerstrokecolor --> :black
+                markercolor --> :black
+                [comp, comp], [0, 2]
+            end
+        end
+    end
+    # Per-subplot settings
+    for (i, τ) in enumerate(sched.tasks)
+        @series begin
+            subplot --> i
+            if i == length(sched.tasks)
+                xguide --> "Time"
+            end
+            yguide --> "Task $i"
+            label --> ""
+            [0], [0]
+        end
+    end
+end
