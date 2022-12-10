@@ -249,7 +249,7 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             if j === nothing
                 continue
             end
-            interval = ExecInterval{timetype}(time, nexttime, proc)
+            interval = ExecInterval{timetype}(timetype(time), timetype(nexttime), proc)
             try
                 exec(j)[end] = union(exec(j)[end], interval)
             catch
@@ -356,6 +356,9 @@ end
             subplot := i
             if i == length(sched.tasks)
                 xguide --> "Time"
+                xticks --> true
+            else
+                xticks --> false
             end
             yguide --> "Task $i"
             yguidefonthalign --> :left
