@@ -10,7 +10,7 @@ package.
 using RealTimeScheduling, Plots
 T = TaskSystem([PeriodicImplicitTask(3, 2), PeriodicImplicitTask(3, 2), PeriodicImplicitTask(3, 2)])
 s = schedule_gedf(T, 2, 30.)
-plot(s)
+plot(s, size=(600, 300))
 ```
 
 ```@docs
