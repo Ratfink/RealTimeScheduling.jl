@@ -156,6 +156,7 @@ function randtasksystem(_::Type{PeriodicImplicitTask{S}}, U::Real, utilization_d
         if S <: Integer
             t = round(S, t)
             c = round(S, c)
+            c > 0 || continue
         end
         append!(T, PeriodicImplicitTask{S}(t, c))
     end
