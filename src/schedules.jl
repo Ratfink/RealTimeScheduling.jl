@@ -73,6 +73,24 @@ Return the priority of job `j`.
 priority(::AbstractJob) = error("Implement priority")
 
 """
+    exec(j::AbstractJob)
+
+Return the execution intervals of job `j`.
+
+See also [`exectime`](@ref).
+"""
+exec(::AbstractJob) = error("Implement exec")
+
+"""
+    exectime(j::AbstractJob)
+
+Return the total time occupied by all execution intervals of job `j`.
+
+See also [`exec`](@ref).
+"""
+exectime(j::AbstractJob) = sum(width.(exec(j)))
+
+"""
     Job{S}(release::S, deadline::S, cost::S, priority::S, exec::Vector{ExecInterval{S}}
 
 A real-time job with the given parameters, executing over the intervals in `exec`.
@@ -89,11 +107,6 @@ release(j::Job) = j.release
 deadline(j::Job) = j.deadline
 cost(j::Job) = j.cost
 priority(j::Job) = j.priority
-"""
-    exec(j::Job)
-
-Return the execution intervals of job `j`.
-"""
 exec(j::Job) = j.exec
 
 """
@@ -130,11 +143,6 @@ release(j::JobOfTask) = j.release
 deadline(j::JobOfTask) = j.deadline
 cost(j::JobOfTask) = j.cost
 priority(j::JobOfTask) = j.priority
-"""
-    exec(j::JobOfTask)
-
-Return the execution intervals of job `j`.
-"""
 exec(j::JobOfTask) = j.exec
 
 
@@ -210,7 +218,7 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
                 nexttime = min(nexttime, next_rel)
             end
             if !isempty(jobs) && (time < next_rel
-                                  || sum(width.(exec(jobs[end]))) < cost(jobs[end]))
+                                  || exectime(jobs[end]) < cost(jobs[end]))
                 continue
             end
             j = jobtype(τ, next_rel, next_rel+deadline(τ), cost(τ), i, ExecInterval{timetype}[])
@@ -221,7 +229,7 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
         # Clear out any completed jobs
         for (proc, j) in enumerate(proc_jobs)
             # Clear out any completed jobs
-            if j !== nothing && sum(width.(exec(j))) >= cost(j)
+            if j !== nothing && exectime(j) >= cost(j)
                 proc_jobs[proc] = nothing
                 j = nothing
             end
@@ -241,7 +249,7 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             end
             # Find the next interesting time instant
             if j !== nothing
-                nexttime = min(nexttime, time+cost(j)-sum(width.(exec(j))))
+                nexttime = min(nexttime, time+cost(j)-exectime(j))
             end
         end
         # Schedule pending jobs
@@ -287,7 +295,7 @@ schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_glob
 end
 
 @recipe function scheduleplot(sched::RealTimeTaskSchedule)
-    endtime = maximum(rightendpoint.(Iterators.flatten(exec.(Iterators.flatten(sched.jobs)))))
+    endtime = maximum(supremum.(Iterators.flatten(exec.(Iterators.flatten(sched.jobs)))))
     layout --> (length(sched.tasks), 1)
     xlims --> (0, endtime)
     ylims --> (0, 2)
@@ -315,8 +323,7 @@ end
         for j in τ
             rel = release(j)
             dead = deadline(j)
-            total_exec = sum(width.(exec(j)))
-            comp = total_exec == cost(j) ? maximum(rightendpoint.(exec(j))) : -1
+            comp = exectime(j) == cost(j) ? maximum(supremum.(exec(j))) : -1
             # Release
             @series begin
                 subplot := i

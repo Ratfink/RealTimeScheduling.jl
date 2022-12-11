@@ -40,6 +40,7 @@ release(::AbstractJob)
 deadline(::AbstractJob)
 cost(::AbstractJob)
 priority(::AbstractJob)
-exec
+exec(::AbstractJob)
+exectime(::AbstractJob)
 ExecInterval
 ```
