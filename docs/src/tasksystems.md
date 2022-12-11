@@ -28,13 +28,15 @@ implicit_deadline(::AbstractRealTimeTaskSystem)
 constrained_deadline(::AbstractRealTimeTaskSystem)
 ```
 
-It's just as easy to compute the utilization or density of a task system.
+It's just as easy to compute the utilization or density of a task system, as
+well as its hyperperiod.
 
 ```@docs
 utilization(::AbstractRealTimeTaskSystem)
 density(::AbstractRealTimeTaskSystem)
 min_utilization(::AbstractRealTimeTaskSystem)
 min_density(::AbstractRealTimeTaskSystem)
+hyperperiod(::AbstractRealTimeTaskSystem)
 ```
 
 Additionally, it's often a sensible check to verify that a task system is
