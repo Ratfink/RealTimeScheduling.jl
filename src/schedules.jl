@@ -91,6 +91,13 @@ See also [`exec`](@ref).
 exectime(j::AbstractJob) = sum(width.(exec(j)))
 
 """
+    completed(j::AbstractJob)
+
+Return whether the job `j` has completed, i.e., whether `exectime(j) >= cost(j)`.
+"""
+completed(j::AbstractJob) = exectime(j) >= cost(j)
+
+"""
     Job{S}(release::S, deadline::S, cost::S, priority::S, exec::Vector{ExecInterval{S}}
 
 A real-time job with the given parameters, executing over the intervals in `exec`.
@@ -217,8 +224,7 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             if time < next_rel
                 nexttime = min(nexttime, next_rel)
             end
-            if !isempty(jobs) && (time < next_rel
-                                  || exectime(jobs[end]) < cost(jobs[end]))
+            if !isempty(jobs) && (time < next_rel || !completed(jobs[end]))
                 continue
             end
             j = jobtype(τ, next_rel, next_rel+deadline(τ), cost(τ), i, ExecInterval{timetype}[])
@@ -229,7 +235,7 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
         # Clear out any completed jobs
         for (proc, j) in enumerate(proc_jobs)
             # Clear out any completed jobs
-            if j !== nothing && exectime(j) >= cost(j)
+            if j !== nothing && completed(j)
                 proc_jobs[proc] = nothing
                 j = nothing
             end
@@ -323,7 +329,7 @@ end
         for j in τ
             rel = release(j)
             dead = deadline(j)
-            comp = exectime(j) == cost(j) ? maximum(supremum.(exec(j))) : -1
+            comp = completed(j) ? maximum(supremum.(exec(j))) : -1
             # Release
             @series begin
                 subplot := i

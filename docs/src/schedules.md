@@ -42,5 +42,6 @@ cost(::AbstractJob)
 priority(::AbstractJob)
 exec(::AbstractJob)
 exectime(::AbstractJob)
+completed(::AbstractJob)
 ExecInterval
 ```
