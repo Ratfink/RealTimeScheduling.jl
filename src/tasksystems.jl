@@ -104,6 +104,13 @@ Return the sum min_density of all tasks in `T`.
 min_density(T::AbstractRealTimeTaskSystem) = sum(min_density, T, init=0)
 
 """
+    hyperperiod(T::AbstractRealTimeTaskSystem)
+
+Return the hyperperiod, or least common multiple of the task periods, of `T`.
+"""
+hyperperiod(T::AbstractRealTimeTaskSystem) = lcm(period.(T))
+
+"""
     feasible(T::AbstractRealTimeTaskSystem)
 
 Test whether the real-time task system `T` is feasible, i.e. its density is at most 1.

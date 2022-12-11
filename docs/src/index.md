@@ -38,7 +38,7 @@ To get a better idea of what's going on here, we can compute a schedule to the
 hyperperiod of the tasks, and plot it.
 
 ```@example lehoczky_3
-s = schedule_gfp(ex3, 1, lcm(period.(ex3)))
+s = schedule_gfp(ex3, 1, hyperperiod(ex3))
 using Plots
 plot(s, size=(800, 200), xguide="", yguide="")
 ```

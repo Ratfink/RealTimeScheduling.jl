@@ -20,6 +20,7 @@ export AbstractRealTimeTask,
        # Task systems
        AbstractRealTimeTaskSystem,
        TaskSystem,
+       hyperperiod,
        rate_monotonic!,
        deadline_monotonic!,
        randtasksystem,
