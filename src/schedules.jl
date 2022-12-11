@@ -219,14 +219,17 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
         # Release new jobs if needed
         for (i, τ) in enumerate(T)
             jobs = sched.jobs[i]
-            # If there is a non-empty current job, don't release a new one
+            # Get the next release time of this task
             next_rel = isempty(jobs) ? 0 : period(τ) + release(jobs[end])
+            # Make a scheduling decision at the next release time
             if time < next_rel
                 nexttime = min(nexttime, next_rel)
             end
+            # If there is a non-empty current job, don't release a new one
             if !isempty(jobs) && (time < next_rel || !completed(jobs[end]))
                 continue
             end
+            # Release the new job
             j = jobtype(τ, next_rel, next_rel+deadline(τ), cost(τ), i, ExecInterval{timetype}[])
             release!(j)
             push!(jobs, j)
@@ -237,19 +240,16 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             # Clear out any completed jobs
             if j !== nothing && completed(j)
                 proc_jobs[proc] = nothing
-                j = nothing
             end
         end
         # Pick jobs to run and find next interesting time instant
         sortby(key) = key[2] === nothing ? typemax(timetype) : priority(key[2])
         for (proc, j) in sort(collect(enumerate(proc_jobs)), by=sortby, rev=true)
-            # Pick new jobs for idle processors
-            if !isempty(readyq) && j === nothing
-                proc_jobs[proc] = dequeue!(readyq)
-                j = proc_jobs[proc]
-            # Replace lower priority jobs with ones from the queue
-            elseif !isempty(readyq) && priority(first(peek(readyq))) < priority(j)
-                enqueue!(readyq, j, priority(j))
+            # Pick new jobs for processors running nothing or lower priority jobs
+            if !isempty(readyq) && (j === nothing || priority(first(peek(readyq))) < priority(j))
+                if j !== nothing
+                    enqueue!(readyq, j, priority(j))
+                end
                 proc_jobs[proc] = dequeue!(readyq)
                 j = proc_jobs[proc]
             end
