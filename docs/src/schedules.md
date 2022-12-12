@@ -43,5 +43,7 @@ priority(::AbstractJob)
 exec(::AbstractJob)
 exectime(::AbstractJob)
 completed(::AbstractJob)
+completiontime(::AbstractJob)
+responsetime(::AbstractJob)
 ExecInterval
 ```

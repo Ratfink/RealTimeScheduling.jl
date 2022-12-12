@@ -97,6 +97,29 @@ Return whether the job `j` has completed, i.e., whether `exectime(j) >= cost(j)`
 """
 completed(j::AbstractJob) = exectime(j) >= cost(j)
 
+
+"""
+    completiontime(j::AbstractJob)
+
+Return the absolute completion time of job `j`, if it has completed.  Throw an
+`ArgumentError` otherwise.
+"""
+function completiontime(j::AbstractJob)
+    if completed(j)
+        maximum(supremum.(exec(j)))
+    else
+        throw(ArgumentError("j has not completed"))
+    end
+end
+
+"""
+    responsetime(j::AbstractJob)
+
+Return the response time of job `j`, if it has completed.  Throw an `ArgumentError`
+otherwise.
+"""
+responsetime(j::AbstractJob) = completiontime(j) - release(j)
+
 """
     Job{S}(release::S, deadline::S, cost::S, priority::S, exec::Vector{ExecInterval{S}}
 
@@ -329,7 +352,7 @@ end
         for j in τ
             rel = release(j)
             dead = deadline(j)
-            comp = completed(j) ? maximum(supremum.(exec(j))) : -1
+            comp = completed(j) ? completiontime(j) : -1
             # Release
             @series begin
                 subplot := i
