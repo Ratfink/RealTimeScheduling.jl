@@ -44,6 +44,7 @@ export AbstractRealTimeTask,
        schedule_global,
        schedule_gfp,
        schedule_gedf,
+       schedule_gfl,
        # Weakly-hard constraints
        WeaklyHardConstraint,
        MeetAny,

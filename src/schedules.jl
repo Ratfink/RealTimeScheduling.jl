@@ -219,8 +219,8 @@ end
 Simulate a preemptive global schedule of task system `T` on `m` processors to the specified
 `endtime`.  When releasing a job, the function `release!(job)` is called, allowing
 arbitrary modifications to be made, enabling a wide variety of global schedulers to be
-implemented.  Two common examples are provided: [`schedule_gfp`](@ref) and
-[`schedule_gedf`](@ref).
+implemented.  Three examples are provided: [`schedule_gfp`](@ref), [`schedule_gedf`](@ref),
+and [`schedule_gfl`](@ref).
 
 The `job` provided to `release!(job)` defaults to being released as early as possible (i.e.
 at time 0 or one period after the task's last job), and has the relative deadline and cost
@@ -321,6 +321,21 @@ See also [`schedule_global`](@ref) for more general global scheduling.
 """
 schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_global(T, m, time) do j
     j.priority = deadline(j)
+end
+
+"""
+    schedule_gfl(T, m, time)
+
+Simulate a preemptive global fair lateness (GFL) schedule of task system `T` on `m`
+processors for the specified `time`.  This provides the lowest tardiness bounds of any
+GEDF-like scheduler under compliant vector analysis; for more information, see Erickson,
+"Managing Tardiness Bounds and Overload in Soft Real-Time Systems."
+DOI: [10.17615/fvp3-q039](https://doi.org/10.17615/fvp3-q039).
+
+See also [`schedule_global`](@ref) for more general global scheduling.
+"""
+schedule_gfl(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_global(T, m, time) do j
+    j.priority = deadline(j) - (m - 1) / m * cost(j)
 end
 
 @recipe function scheduleplot(sched::RealTimeTaskSchedule)

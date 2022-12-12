@@ -16,6 +16,7 @@ plot(s, size=(600, 300))
 ```@docs
 schedule_global
 schedule_gedf
+schedule_gfl
 schedule_gfp
 AbstractSchedule
 AbstractTaskSchedule
