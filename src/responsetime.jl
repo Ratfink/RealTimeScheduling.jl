@@ -12,7 +12,7 @@ struct GEDFCompliantVectorAlg <: GEDFAlgorithm end
 
 Indicate that a response time bound should be computed according to Devi and Anderson,
 "Tardiness Bounds under Global EDF Scheduling on a Multiprocessor."
-DOI: https://doi.org/10.1007/s11241-007-9042-1
+DOI: [10.1007/s11241-007-9042-1](https://doi.org/10.1007/s11241-007-9042-1)
 """
 const GEDFDeviAnderson = GEDFDeviAndersonAlg()
 
@@ -20,7 +20,8 @@ const GEDFDeviAnderson = GEDFDeviAndersonAlg()
     GEDFCompliantVector
 
 Indicate that a response time bound should be computed according to Erickson, "Managing
-Tardiness Bounds and Overload in Soft Real-Time Systems." ISBN: 978-1-321-14155-9
+Tardiness Bounds and Overload in Soft Real-Time Systems."
+DOI: [10.17615/fvp3-q039](https://doi.org/10.17615/fvp3-q039)
 """
 const GEDFCompliantVector = GEDFCompliantVectorAlg()
 
