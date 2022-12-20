@@ -111,11 +111,12 @@ Return the hyperperiod, or least common multiple of the task periods, of `T`.
 hyperperiod(T::AbstractRealTimeTaskSystem) = lcm(period.(T))
 
 """
-    feasible(T::AbstractRealTimeTaskSystem)
+    feasible(T::AbstractRealTimeTaskSystem, m::Integer=1)
 
-Test whether the real-time task system `T` is feasible, i.e. its density is at most 1.
+Test whether the real-time task system `T` is feasible on `m` processors, i.e. its density
+is at most `m`.
 """
-feasible(T::AbstractRealTimeTaskSystem) = density(T) <= 1
+feasible(T::AbstractRealTimeTaskSystem, m::Integer=1) = density(T) <= m
 
 """
     rate_monotonic!(T::AbstractRealTimeTaskSystem)
