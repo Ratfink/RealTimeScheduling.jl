@@ -214,7 +214,7 @@ function RealTimeTaskSchedule(T::Type, tasks::AbstractRealTimeTaskSystem)
 end
 
 """
-    schedule_global(release!, T, m, endtime)
+    schedule_global(release!, T, m, endtime; kill=false)
 
 Simulate a preemptive global schedule of task system `T` on `m` processors to the specified
 `endtime`.  When releasing a job, the function `release!(job)` is called, allowing
@@ -226,6 +226,8 @@ The `job` provided to `release!(job)` defaults to being released as early as pos
 at time 0 or one period after the task's last job), and has the relative deadline and cost
 specified by the task.  The priority defaults to the task's index in `T`, with lower
 priority values being treated as higher priority by the scheduler.
+
+If `kill` is `true`, jobs are killed at their deadline if they have not yet completed.
 """
 function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real; kill::Bool=false)
     timetype = typeof(endtime)
@@ -318,21 +320,25 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
 end
 
 """
-    schedule_gfp(T, m, time)
+    schedule_gfp(T, m, time; kill=false)
 
 Simulate a preemptive global fixed priority (GFP) schedule of task system `T` on `m`
 processors for the specified `time`.  Tasks are prioritized by their index in `T`, lowest
 index first.
+
+If `kill` is `true`, jobs are killed at their deadline if they have not yet completed.
 
 See also [`schedule_global`](@ref) for more general global scheduling.
 """
 schedule_gfp(T::AbstractRealTimeTaskSystem, m::Int, time::Real; kill::Bool=false) = schedule_global(identity, T, m, time; kill=kill)
 
 """
-    schedule_gedf(T, m, time)
+    schedule_gedf(T, m, time; kill=false)
 
 Simulate a preemptive global earliest-deadline-first (GEDF) schedule of task system `T` on
 `m` processors for the specified `time`.
+
+If `kill` is `true`, jobs are killed at their deadline if they have not yet completed.
 
 See also [`schedule_global`](@ref) for more general global scheduling.
 """
