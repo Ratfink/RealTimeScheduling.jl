@@ -227,7 +227,7 @@ at time 0 or one period after the task's last job), and has the relative deadlin
 specified by the task.  The priority defaults to the task's index in `T`, with lower
 priority values being treated as higher priority by the scheduler.
 """
-function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real)
+function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real; kill::Bool=false)
     timetype = typeof(endtime)
     jobtype = JobOfTask{timetype, eltype(T)}
     # Create the schedule
@@ -249,7 +249,9 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
                 nexttime = min(nexttime, next_rel)
             end
             # If there is a non-empty current job, don't release a new one
-            if !isempty(jobs) && (time < next_rel || !completed(jobs[end]))
+            if !isempty(jobs) && (time < next_rel || (!kill && !completed(jobs[end]))
+                                  || (kill && !completed(jobs[end])
+                                      && time <= deadline(jobs[end])))
                 continue
             end
             # Release the new job
@@ -258,11 +260,23 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             push!(jobs, j)
             enqueue!(readyq, j, priority(j))
         end
-        # Clear out any completed jobs
+        # Clear out whatever jobs we have to
         for (proc, j) in enumerate(proc_jobs)
             # Clear out any completed jobs
             if j !== nothing && completed(j)
                 proc_jobs[proc] = nothing
+            end
+            # If asked to, remove jobs that have missed their deadline
+            if kill && j !== nothing && time >= deadline(j)
+                proc_jobs[proc] = nothing
+            end
+        end
+        # If asked to, remove jobs from the ready queue if they missed their deadline
+        if kill
+            for (j, _) in readyq
+                if time >= deadline(j)
+                    delete!(readyq, j)
+                end
             end
         end
         # Pick jobs to run and find next interesting time instant
@@ -279,6 +293,9 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             # Find the next interesting time instant
             if j !== nothing
                 nexttime = min(nexttime, time+cost(j)-exectime(j))
+                if deadline(j) > time
+                    nexttime = min(nexttime, deadline(j))
+                end
             end
         end
         # Schedule pending jobs
@@ -309,7 +326,7 @@ index first.
 
 See also [`schedule_global`](@ref) for more general global scheduling.
 """
-schedule_gfp(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_global(identity, T, m, time)
+schedule_gfp(T::AbstractRealTimeTaskSystem, m::Int, time::Real; kill::Bool=false) = schedule_global(identity, T, m, time; kill=kill)
 
 """
     schedule_gedf(T, m, time)
@@ -319,7 +336,7 @@ Simulate a preemptive global earliest-deadline-first (GEDF) schedule of task sys
 
 See also [`schedule_global`](@ref) for more general global scheduling.
 """
-schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_global(T, m, time) do j
+schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real; kill::Bool=false) = schedule_global(T, m, time, kill=kill) do j
     j.priority = deadline(j)
 end
 
