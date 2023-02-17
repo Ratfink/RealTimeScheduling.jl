@@ -7,6 +7,8 @@
 
 Real-time systems modeling and schedulability analysis
 
+![Logo](docs/src/assets/logo.svg)
+
 This package aims to provide useful tools for writing schedulability studies
 with Julia.  It provides basic functionality for schedulability testing,
 response time analysis, schedule simulation, and schedule plotting.
