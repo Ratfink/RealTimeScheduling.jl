@@ -347,7 +347,7 @@ schedule_gedf(T::AbstractRealTimeTaskSystem, m::Int, time::Real; kill::Bool=fals
 end
 
 """
-    schedule_gfl(T, m, time)
+    schedule_gfl(T, m, time; kill=false)
 
 Simulate a preemptive global fair lateness (GFL) schedule of task system `T` on `m`
 processors for the specified `time`.  This provides the lowest tardiness bounds of any
@@ -355,9 +355,11 @@ GEDF-like scheduler under compliant vector analysis; for more information, see E
 "Managing Tardiness Bounds and Overload in Soft Real-Time Systems."
 DOI: [10.17615/fvp3-q039](https://doi.org/10.17615/fvp3-q039).
 
+If `kill` is `true`, jobs are killed at their deadline if they have not yet completed.
+
 See also [`schedule_global`](@ref) for more general global scheduling.
 """
-schedule_gfl(T::AbstractRealTimeTaskSystem, m::Int, time::Real) = schedule_global(T, m, time) do j
+schedule_gfl(T::AbstractRealTimeTaskSystem, m::Int, time::Real; kill::Bool=false) = schedule_global(T, m, time, kill=kill) do j
     j.priority = deadline(j) - (m - 1) / m * cost(j)
 end
 
