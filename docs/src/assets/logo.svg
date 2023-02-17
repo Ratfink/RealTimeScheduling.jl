@@ -2,17 +2,34 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="256"
-   height="176"
-   viewBox="0 0 256 176"
-   version="1.1"
-   id="svg5"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
    sodipodi:docname="logo.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   id="svg5"
+   version="1.1"
+   viewBox="0 0 256 176"
+   height="176"
+   width="256"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <style
+     id="style974"><![CDATA[
+@media (prefers-color-scheme:dark) {
+.purple-tee { 
+    fill:#d6bae3 !important;
+}
+.green-tee { fill:#aef7a6 !important; }
+.red-tee { fill:#f3aba8 !important; }
+.arrow { color:white !important;  fill:white !important; }
+.timeline { stroke:white !important; }
+}
+.timeline { fill:#cc0000;  stroke-dasharray:none;  stroke-linecap:square;  stroke-linejoin:round;  stroke-opacity:1;  stroke-width:4; stroke:black; }
+.arrow { color:#000000;  fill:#000000; }
+.red-tee { fill:#3a0a08; }
+.green-tee { fill:#062103;  color:#000000; }
+.purple-tee { -inkscape-stroke:none;  color:#000000;  fill:#271430; }
+]]></style>
   <sodipodi:namedview
      id="namedview7"
      pagecolor="#ffffff"
@@ -24,9 +41,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="8.0073835"
-     inkscape:cx="221.54553"
-     inkscape:cy="141.86906"
+     inkscape:zoom="5.5959545"
+     inkscape:cx="192.54981"
+     inkscape:cy="81.308738"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="0"
@@ -206,21 +223,24 @@
          d="M 16,80 V 16.000001"
          id="path7573" />
       <path
-         style="color:#000000;fill:#000000;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
+         style="stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
          d="m 14,14 v 2 64 2 h 4 V 80 16 14 Z"
-         id="path7575" />
+         id="path7575"
+         class="arrow" />
       <g
          id="g7563">
         <g
            id="path7565">
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;stroke-width:2pt;-inkscape-stroke:none"
+             style="fill-rule:evenodd;stroke-width:2pt;-inkscape-stroke:none"
              d="m 16,12.460001 10,17.3 H 6 Z"
-             id="path7569" />
+             id="path7569"
+             class="arrow" />
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;-inkscape-stroke:none"
+             style="fill-rule:evenodd;-inkscape-stroke:none"
              d="M 16,9.7949219 14.845703,11.792969 3.6894531,31.09375 H 28.310547 Z m 0,5.3281251 7.689453,13.302734 H 8.3105469 Z"
-             id="path7571" />
+             id="path7571"
+             class="arrow" />
         </g>
       </g>
     </g>
@@ -231,21 +251,24 @@
          d="M 16,160 V 96"
          id="path7926" />
       <path
-         style="color:#000000;fill:#000000;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
+         style="stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
          d="m 14,94 v 2 64 2 h 4 v -2 -64 -2 z"
-         id="path7928" />
+         id="path7928"
+         class="arrow" />
       <g
          id="g7916">
         <g
            id="path7918">
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;stroke-width:2pt;-inkscape-stroke:none"
+             style="fill-rule:evenodd;stroke-width:2pt;-inkscape-stroke:none"
              d="m 16,92.46 10,17.3 H 6 Z"
-             id="path7922" />
+             id="path7922"
+             class="arrow" />
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;-inkscape-stroke:none"
+             style="fill-rule:evenodd;-inkscape-stroke:none"
              d="M 16,89.794922 14.845703,91.792969 3.6894531,111.09375 H 28.310547 Z m 0,5.328125 7.689453,13.302733 H 8.3105469 Z"
-             id="path7924" />
+             id="path7924"
+             class="arrow" />
         </g>
       </g>
     </g>
@@ -256,34 +279,39 @@
          d="M 128,160 V 96"
          id="path7976" />
       <path
-         style="color:#000000;fill:#000000;stroke-linecap:square;stroke-linejoin:round"
+         style="stroke-linecap:square;stroke-linejoin:round"
          d="m 126,94 v 2 64 2 h 4 v -2 -64 -2 z"
-         id="path7978" />
+         id="path7978"
+         class="arrow" />
       <g
          id="g7958">
         <g
            id="path7968">
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;stroke-width:2pt"
+             style="fill-rule:evenodd;stroke-width:2pt"
              d="m 128,92.46 10,17.3 h -20 z"
-             id="path7972" />
+             id="path7972"
+             class="arrow" />
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd"
+             style="fill-rule:evenodd"
              d="m 128,89.794922 -1.1543,1.998047 -11.15625,19.300781 h 24.6211 z m 0,5.328125 7.68945,13.302733 h -15.3789 z"
-             id="path7974" />
+             id="path7974"
+             class="arrow" />
         </g>
         <g
            id="path7960">
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;stroke-width:2pt"
+             style="fill-rule:evenodd;stroke-width:2pt"
              d="m 128.01666,159.52805 -10,-17.3 h 20 z"
-             id="path7964" />
+             id="path7964"
+             class="arrow" />
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd"
+             style="fill-rule:evenodd"
              d="m 128.01666,162.19313 1.1543,-1.99805 11.15625,-19.30078 h -24.6211 z m 0,-5.32813 -7.68945,-13.30273 h 15.3789 z"
              id="path7966"
              inkscape:transform-center-x="-0.0083286438"
-             inkscape:transform-center-y="-8.4503106" />
+             inkscape:transform-center-y="-8.4503106"
+             class="arrow" />
         </g>
       </g>
     </g>
@@ -294,15 +322,17 @@
          d="M 160,80 V 16.000001"
          id="path7874" />
       <path
-         style="color:#000000;fill:#062103;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
+         style="stroke-linecap:square;stroke-linejoin:round"
          d="m 158,14 v 2 64 2 h 4 V 80 16 14 Z"
-         id="path7876" />
+         id="path7876"
+         class="green-tee" />
       <g
          id="g7866">
         <path
-           style="color:#000000;fill:#062103;-inkscape-stroke:none"
            d="m 144,14 v 4 h 32 v -4 z"
-           id="path7868" />
+           id="path7868"
+           class="green-tee"
+           style="" />
       </g>
     </g>
     <g
@@ -312,15 +342,17 @@
          d="M 96,160 V 96"
          id="path7944" />
       <path
-         style="color:#000000;fill:#3a0a08;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
+         style="stroke-linecap:square;stroke-linejoin:round"
          d="m 94,94 v 2 64 2 h 4 v -2 -64 -2 z"
-         id="path7946" />
+         id="path7946"
+         class="red-tee" />
       <g
          id="g7936">
         <path
-           style="color:#000000;fill:#3a0a08;-inkscape-stroke:none"
            d="m 80,94 v 4 h 32 v -4 z"
-           id="path7938" />
+           id="path7938"
+           class="red-tee"
+           style="" />
       </g>
     </g>
     <g
@@ -330,15 +362,17 @@
          d="M 224,160 V 96"
          id="path8162" />
       <path
-         style="color:#000000;fill:#271430;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
+         style="stroke-linecap:square;stroke-linejoin:round;fill-opacity:1"
          d="m 222,94 v 2 64 2 h 4 v -2 -64 -2 z"
-         id="path8164" />
+         id="path8164"
+         class="purple-tee" />
       <g
          id="g8154">
         <path
-           style="color:#000000;fill:#271430;-inkscape-stroke:none"
            d="m 208,94 v 4 h 32 v -4 z"
-           id="path8156" />
+           id="path8156"
+           class="purple-tee"
+           style="fill-opacity:1" />
       </g>
     </g>
     <g
@@ -348,9 +382,10 @@
          d="M 240,80 V 16.000001"
          id="path7906" />
       <path
-         style="color:#000000;fill:#000000;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
+         style="stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none"
          d="m 238,14 v 2 64 2 h 4 V 80 16 14 Z"
-         id="path7908" />
+         id="path7908"
+         class="arrow" />
       <g
          id="g7896"
          inkscape:transform-center-x="0.091936072"
@@ -359,13 +394,15 @@
         <g
            id="path7898">
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;stroke-width:2pt;-inkscape-stroke:none"
+             style="fill-rule:evenodd;stroke-width:2pt;-inkscape-stroke:none"
              d="m 240,80.46 10,17.3 h -20 z"
-             id="path7902" />
+             id="path7902"
+             class="arrow" />
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;-inkscape-stroke:none"
+             style="fill-rule:evenodd;-inkscape-stroke:none"
              d="m 240,77.794922 -1.1543,1.998047 -11.15625,19.300781 h 24.6211 z m 0,5.328125 7.68945,13.302734 h -15.3789 z"
-             id="path7904" />
+             id="path7904"
+             class="arrow" />
         </g>
       </g>
     </g>
@@ -376,23 +413,26 @@
          d="M 240,160 V 96"
          id="path8033" />
       <path
-         style="color:#000000;fill:#000000;stroke-linecap:square;stroke-linejoin:round"
+         style="stroke-linecap:square;stroke-linejoin:round"
          d="m 238,94 v 2 64 2 h 4 v -2 -64 -2 z"
-         id="path8035" />
+         id="path8035"
+         class="arrow" />
       <g
          id="g8023">
         <g
            id="path8025">
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd;stroke-width:2pt"
+             style="fill-rule:evenodd;stroke-width:2pt"
              d="m 240,159.55752 -10,-17.3 h 20 z"
              id="path8029"
-             inkscape:transform-center-y="-9.1012411" />
+             inkscape:transform-center-y="-9.1012411"
+             class="arrow" />
           <path
-             style="color:#000000;fill:#000000;fill-rule:evenodd"
+             style="fill-rule:evenodd"
              d="m 240,162.2226 1.1543,-1.99805 11.15625,-19.30078 h -24.6211 z m 0,-5.32813 -7.68945,-13.30273 h 15.3789 z"
              id="path8031"
-             inkscape:transform-center-y="-8.4355761" />
+             inkscape:transform-center-y="-8.4355761"
+             class="arrow" />
         </g>
       </g>
     </g>
@@ -403,14 +443,16 @@
      inkscape:label="Timelines"
      style="display:inline">
     <path
-       style="fill:#cc0000;stroke:#000000;stroke-width:4;stroke-linecap:square;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="M 240,80 H 16"
        id="path119"
-       sodipodi:nodetypes="cc" />
+       sodipodi:nodetypes="cc"
+       class="timeline"
+       style="" />
     <path
-       style="fill:#cc0000;stroke:#000000;stroke-width:4;stroke-linecap:square;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="M 16,160 H 240"
        id="path2260"
-       sodipodi:nodetypes="cc" />
+       sodipodi:nodetypes="cc"
+       class="timeline"
+       style="" />
   </g>
 </svg>
