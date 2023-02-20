@@ -214,7 +214,7 @@ function RealTimeTaskSchedule(T::Type, tasks::AbstractRealTimeTaskSystem)
 end
 
 """
-    schedule_global(release!, T, m, endtime; kill=false)
+    schedule_global(release!, T, m, endtime; kill=false, pass_schedule=false)
 
 Simulate a preemptive global schedule of task system `T` on `m` processors to the specified
 `endtime`.  When releasing a job, the function `release!(job)` is called, allowing
@@ -228,8 +228,10 @@ specified by the task.  The priority defaults to the task's index in `T`, with l
 priority values being treated as higher priority by the scheduler.
 
 If `kill` is `true`, jobs are killed at their deadline if they have not yet completed.
+
+If `pass_schedule` is `true`, the `release!` function is passed a second argument containing the schedule up until the job's release.
 """
-function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real; kill::Bool=false)
+function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtime::Real; kill::Bool=false, pass_schedule=false)
     timetype = typeof(endtime)
     jobtype = JobOfTask{timetype, eltype(T)}
     # Create the schedule
@@ -258,7 +260,11 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             end
             # Release the new job
             j = jobtype(τ, next_rel, next_rel+deadline(τ), cost(τ), i, ExecInterval{timetype}[])
-            release!(j)
+            if pass_schedule
+                release!(j, sched)
+            else
+                release!(j)
+            end
             push!(jobs, j)
             enqueue!(readyq, j, priority(j))
         end
