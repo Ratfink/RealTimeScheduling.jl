@@ -255,7 +255,7 @@ function schedule_global(release!, T::AbstractRealTimeTaskSystem, m::Int, endtim
             # If there is a non-empty current job, don't release a new one
             if !isempty(jobs) && (time < next_rel || (!kill && !completed(jobs[end]))
                                   || (kill && !completed(jobs[end])
-                                      && time <= deadline(jobs[end])))
+                                      && time < deadline(jobs[end])))
                 continue
             end
             # Release the new job
