@@ -8,7 +8,8 @@ module JobClassLevelScheduling
 using ...RealTimeScheduling
 
 export schedule_jcl,
-       miss_threshold
+       miss_threshold,
+       low_index_first
 
 
 """
@@ -71,6 +72,49 @@ miss_threshold(c::MeetAny) = Int(max(floor(c.window / c.meet) - 1, 1))
 
 Compute the miss threshold ``w_i`` for the given weakly hard task.
 """
-miss_threshold(τ::PeriodicWeaklyHardTask{<:Real, MeetAny}) = miss_threshold(constraint(τ))
+miss_threshold(τ::PeriodicWeaklyHardTask{<:Real, <:MeetAny}) = miss_threshold(constraint(τ))
+
+"""
+    low_index_first(T::AbstractRealTimeTaskSystem)
+
+Compute priorities for each job-class of each task in T according to the low-index
+job-class first with miss thresholds (LIF-w) heuristic.
+"""
+function low_index_first(T::AbstractRealTimeTaskSystem)
+    N = length(T)
+    dm_order = sort(axes(T, 1), by=i->deadline(T[i]))
+    # l[i]: number of job-classes for T[i]
+    l = zeros(Int, N)
+    for i in dm_order
+        l[i] = constraint(T[i]).meet + 1
+    end
+    timetype = typeof(deadline(T[1]))
+    prio = 1
+    prios = Vector{Vector{timetype}}(undef, N)
+    if schedulable_fixed_priority(T[dm_order])
+        for (prio, i) in enumerate(dm_order)
+            # Assign the same priority to all job-classes of T[i]
+            prios[i] = ones(timetype, l[i]) .* prio
+        end
+    else
+        for i in dm_order
+            prios[i] = zeros(timetype, l[i])
+        end
+        L = maximum(l)
+        for q in 1:L
+            if q > 1
+                # Sort T in ascending order of w_i and deadline
+                dm_order = sort(axes(T, 1), by=i->(miss_threshold(T[i]), deadline(T[i])))
+            end
+            for i in dm_order
+                if q <= l[i]
+                    prios[i][q] = prio
+                    prio += 1
+                end
+            end
+        end
+    end
+    prios
+end
 
 end
