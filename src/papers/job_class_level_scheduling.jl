@@ -9,7 +9,8 @@ using ...RealTimeScheduling
 
 export schedule_jcl,
        miss_threshold,
-       low_index_first
+       low_index_first,
+       schedulable_jcl
 
 
 """
@@ -115,6 +116,123 @@ function low_index_first(T::AbstractRealTimeTaskSystem)
         end
     end
     prios
+end
+
+"""
+    wcrt_jcl(T, prio)
+
+Compute worst-case response times (WCRTs) for each job-class in task system `T`, with the
+given job-class priorities `prio`.
+"""
+function wcrt_jcl(T::AbstractRealTimeTaskSystem, prio)
+    wcrt = zero.(prio)
+    η = zero.(prio)
+    # Vector of (task index, job-class index, job-class priority)
+    jcp = map(x->(x[1], x[2][1], x[2][2]),
+              Iterators.flatten(map(x->Iterators.zip(Iterators.cycle(x[1]), x[2]),
+                                    enumerate(enumerate.(prio)))))
+    # Sort by job-class priority
+    sort!(jcp, by=x->x[3])
+    for (i, q, πiq) in jcp
+        Riq = cost(T[i])
+        Riq_prev = 0
+        # While not at fixed point
+        while Riq > Riq_prev
+            Riq_prev = Riq
+            Wiq = 0
+            # For each task
+            for k in eachindex(T)
+                v = 0
+                # If it's not the task we're currently analyzing
+                if k != i
+                    # For each job-class
+                    for (p, πkp) in enumerate(prio[k])
+                        # If it's higher priority
+                        if πkp < πiq
+                            # If that job-class always completes on time
+                            if wcrt[k][p] <= deadline(T[k])
+                                if p == 1
+                                    η[k][p] = (miss_threshold(T[k]) + 1) * period(T[k])
+                                elseif q > 1
+                                    η[k][p] = (p + 2) * period(T[k])
+                                end
+                            # If that job-class may miss
+                            else
+                                if miss_threshold(T[k]) == 1
+                                    η[k][p] = (p + 1) * period(T[k])
+                                elseif miss_threshold(T[k]) > 1
+                                    η[k][p] = period(T[k])
+                                end
+                            end
+                            # If it's the highest-index job-class
+                            if p == constraint(T[k]).meet + 1
+                                η[k][p] = period(T[k])
+                            end
+                            v += ceil(Riq_prev / η[k][p]) * cost(T[k])
+                        end
+                    end
+                end
+                Wiq += min(v, ceil(Riq_prev / period(T[k])) * cost(T[k]))
+            end
+            Riq = cost(T[i]) + Wiq
+        end
+        wcrt[i][q] = Riq
+    end
+    wcrt
+end
+
+"""
+    schedulable_jcl(T, prio)
+
+Check if the [`AbstractRealTimeTaskSystem`](@ref) `T` is schedulable by job-class-level
+scheduling with the job-class priorities given by `prio`.
+"""
+function schedulable_jcl(T::AbstractRealTimeTaskSystem, prio)
+    wcrt = wcrt_jcl(T, prio)
+    # Lemma 9: The first job-class of each task must have WCRT <= deadline
+    all(((τ, w),) -> w[1] <= deadline(τ), zip(T, wcrt)) || return false
+
+    # Helper function for recursive tree search
+    function tree(τ::PeriodicWeaklyHardTask, wcrt, μ::BitVector, C)
+        # For leaf nodes, return whether their μ-pattern satisfies the constraint
+        if length(μ) == constraint(τ).window
+            return μ ⊢ constraint(τ)
+        end
+        # Lemma 11: A node from its parent's miss branch generates a single meet branch
+        if !μ[end]
+            return tree(τ, wcrt, [μ; true], [C; 2])
+        end
+        meet_C = min(length(wcrt), C[end]+1)
+        if length(C) > 1 && wcrt[C[end-1]] <= deadline(τ) && wcrt[C[end]] <= deadline(τ)
+            return tree(τ, wcrt, [μ; true], [C; meet_C])
+        else
+            return (tree(τ, wcrt, [μ; true], [C; meet_C])
+                    && tree(τ, wcrt, [μ; false], [C; 1]))
+        end
+    end
+
+    # Check schedulability of each task
+    for (i, τ) in enumerate(T)
+        # Lemma 10: A task is schedulable if miss/window >= 1/2 and Lemma 9 holds
+        c = constraint(τ)
+        if (c.meet - c.window) / c.window >= 1/2
+            continue
+        end
+        # If all job-classes complete by the deadline, the task can never miss
+        if all(wcrt[i] .<= deadline(τ))
+            continue
+        end
+        # The trees generate only strings with no more than one miss in any window of
+        # length two.  Thus, this constant time check is sufficient, but not necessary.
+        if MeetAny(1, 2) <= c
+            continue
+        end
+        # Check that all trees have feasible leaves
+        for q in eachindex(wcrt[i])
+            tree(τ, wcrt[i], BitVector([q != 1]), [q]) || return false
+        end
+    end
+    true
 end
 
 end
