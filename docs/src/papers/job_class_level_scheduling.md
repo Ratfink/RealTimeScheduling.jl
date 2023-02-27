@@ -13,4 +13,8 @@ fixed priority scheduler.
 ```@docs
 RealTimeScheduling.Papers.JobClassLevelScheduling.schedule_jcl
 RealTimeScheduling.Papers.JobClassLevelScheduling.miss_threshold
+RealTimeScheduling.Papers.JobClassLevelScheduling.low_index_first
+RealTimeScheduling.Papers.JobClassLevelScheduling.low_index_first_hold
+RealTimeScheduling.Papers.JobClassLevelScheduling.wcrt_jcl
+RealTimeScheduling.Papers.JobClassLevelScheduling.schedulable_jcl
 ```

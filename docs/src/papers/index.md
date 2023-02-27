@@ -12,5 +12,6 @@ your code to this module!
 ## Submodules
 
 ```@docs
+RealTimeScheduling.Papers
 RealTimeScheduling.Papers.JobClassLevelScheduling
 ```

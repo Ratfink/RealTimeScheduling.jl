@@ -11,6 +11,7 @@ export schedule_jcl,
        miss_threshold,
        low_index_first,
        low_index_first_hold,
+       wcrt_jcl,
        schedulable_jcl
 
 
@@ -22,7 +23,6 @@ specified `time`.  Job-class priorities are given by `prio`.
 
 See also [`schedule_global`](@ref) for more general global scheduling.
 """
-
 function schedule_jcl(T::AbstractRealTimeTaskSystem, time::Real, prio)
     schedule_global(T, 1, time, kill=true, pass_schedule=true) do j, sched
         task_index = Int(priority(j))
