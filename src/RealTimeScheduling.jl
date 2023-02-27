@@ -70,5 +70,6 @@ include("tasksystems.jl")
 include("schedules.jl")
 include("schedulability.jl")
 include("responsetime.jl")
+include("papers/Papers.jl")
 
 end

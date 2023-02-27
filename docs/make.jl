@@ -14,6 +14,10 @@ makedocs(
         "schedules.md",
         "responsetime.md",
         "weaklyhard.md",
+        "Papers" => [
+            "papers/index.md",
+            "papers/job_class_level_scheduling.md",
+        ]
     ]
 )
 

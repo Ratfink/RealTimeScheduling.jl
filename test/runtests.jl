@@ -9,4 +9,6 @@ using Test
     include("schedules.jl")
 
     include("weaklyhard.jl")
+
+    include("papers/Papers.jl")
 end
