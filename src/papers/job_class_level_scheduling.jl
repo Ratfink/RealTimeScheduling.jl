@@ -10,6 +10,7 @@ using ...RealTimeScheduling
 export schedule_jcl,
        miss_threshold,
        low_index_first,
+       low_index_first_hold,
        schedulable_jcl
 
 
@@ -21,6 +22,7 @@ specified `time`.  Job-class priorities are given by `prio`.
 
 See also [`schedule_global`](@ref) for more general global scheduling.
 """
+
 function schedule_jcl(T::AbstractRealTimeTaskSystem, time::Real, prio)
     schedule_global(T, 1, time, kill=true, pass_schedule=true) do j, sched
         task_index = Int(priority(j))
@@ -116,6 +118,32 @@ function low_index_first(T::AbstractRealTimeTaskSystem)
         end
     end
     prios
+end
+
+"""
+    low_index_first_hold(T::AbstractRealTimeTaskSystem)
+
+Compute priorities for each job-class of each task in T according to the low-index
+job-class first with priority holding mechanism (LIF-h) heuristic.
+"""
+function low_index_first_hold(T::AbstractRealTimeTaskSystem)
+    prio = low_index_first(T)
+    if schedulable_jcl(T, prio)
+        return prio
+    end
+    idx = 1
+    for (i, τ) in enumerate(T)
+        c = constraint(τ)
+        l = length(prio[i])
+        h = Int(ceil(c.meet / (c.window - c.meet)))
+        while idx < l
+            for q in idx:min(idx+h, l)
+                prio[i][q] = prio[i][idx]
+            end
+            idx += h
+        end
+    end
+    prio
 end
 
 """
