@@ -6,6 +6,8 @@ using Test
 
     include("schedulability.jl")
 
+    include("responsetime.jl")
+
     include("schedules.jl")
 
     include("weaklyhard.jl")
