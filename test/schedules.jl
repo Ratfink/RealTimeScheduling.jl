@@ -10,6 +10,10 @@
     @test completiontime.(s.jobs[2][1:2]) == [4, 7]
     @test_throws ArgumentError completiontime(s.jobs[2][3])
     @test completiontime.(s.jobs[3]) == [2, 6, 9]
+    @test responsetime.(s.jobs[1]) == [2, 2, 2]
+    @test responsetime.(s.jobs[2][1:2]) == [4, 4]
+    @test_throws ArgumentError responsetime(s.jobs[2][3])
+    @test responsetime.(s.jobs[3]) == [2, 3, 3]
 
     # Example from 10.1109/JIOT.2021.3058215
     wh_ex = TaskSystem([PeriodicWeaklyHardTask(11, 11, 6, MissAny(2, 4)),
