@@ -289,7 +289,7 @@ function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformM
     q = L - 1
     for i = 1:sp.H
         p0 = sp.l[_σ(sp.constraint, q, 0), sp.H-i] / sp.l[q, sp.H-i+1]
-        a[i] = Random.rand() > p0
+        a[i] = Random.rand() >= p0
         q = _σ(sp.constraint, q, a[i])
     end
     a
