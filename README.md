@@ -4,6 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://Ratfink.github.io/RealTimeScheduling.jl/dev/)
 [![Build Status](https://github.com/Ratfink/RealTimeScheduling.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Ratfink/RealTimeScheduling.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Documentation Status](https://github.com/Ratfink/RealTimeScheduling.jl/workflows/Documentation/badge.svg)](https://github.com/Ratfink/RealTimeScheduling.jl/actions?query=workflow%3ADocumentation)
+[![codecov](https://codecov.io/gh/Ratfink/RealTimeScheduling.jl/branch/main/graph/badge.svg?token=R9W8FRV8P4)](https://codecov.io/gh/Ratfink/RealTimeScheduling.jl)
 
 Real-time systems modeling and schedulability analysis
 
