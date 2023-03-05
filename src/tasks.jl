@@ -111,6 +111,14 @@ struct PeriodicWeaklyHardTask{S,R} <: AbstractRealTimeTask{S} where {R<:WeaklyHa
     constraint::R
 end
 
+"""
+    PeriodicWeaklyHardTask(τ, constraint)
+
+Create a new [`PeriodicWeaklyHardTask`](@ref) from the parameters of task `τ`, with the
+weakly hard `constraint` given.
+"""
+PeriodicWeaklyHardTask(τ::AbstractRealTimeTask, constraint::WeaklyHardConstraint) = PeriodicWeaklyHardTask(period(τ), deadline(τ), cost(τ), constraint)
+
 period(τ::PeriodicWeaklyHardTask) = τ.T
 deadline(τ::PeriodicWeaklyHardTask) = τ.D
 cost(τ::PeriodicWeaklyHardTask) = τ.C

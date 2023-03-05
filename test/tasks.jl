@@ -5,8 +5,12 @@
     τ_3 = PeriodicTask{Int64}(4, 6, 2)
     τ_4 = PeriodicImplicitTask{Int64}(5, 2)
     τ_f4 = PeriodicImplicitTask{Float64}(5, 2)
+    τ_5 = PeriodicTask{Int64}(5, 3, 2)
+    τ_f5 = PeriodicTask{Float64}(5, 3, 2)
     τ_wh1 = PeriodicWeaklyHardTask(5, 3, 2, MeetAny(3, 5))
     τ_whf1 = PeriodicWeaklyHardTask(5., 3., 2., MeetAny(3, 5))
+    τ_wh1e = PeriodicWeaklyHardTask(τ_5, MeetAny(3, 5))
+    τ_whf1e = PeriodicWeaklyHardTask(τ_f5, MeetAny(3, 5))
     τ_wh2 = PeriodicWeaklyHardTask(5, 3, 2, MeetAny(0, 0))
     τ_whf2 = PeriodicWeaklyHardTask(5., 3., 2., MeetAny(0, 0))
     τ_wh3 = PeriodicWeaklyHardTask(5, 3, 2, MeetRow(0, 0))
@@ -96,6 +100,9 @@
         @test min_utilization(τ_whf4) == 0.0
         @test min_density(τ_whf4) isa Float64
         @test min_density(τ_whf4) == 0.0
+
+        @test τ_wh1 == τ_wh1e
+        @test τ_whf1 == τ_whf1e
     end
     @testset "Periodic[Implicit]Task conversion" begin
         @test convert(PeriodicTask{Float64}, τ_1) == τ_f1
