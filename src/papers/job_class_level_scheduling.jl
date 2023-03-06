@@ -168,8 +168,8 @@ function wcrt_jcl(T::AbstractRealTimeTaskSystem, prio)
     for (i, q, πiq) in jcp
         Riq = cost(T[i])
         Riq_prev = 0
-        # While not at fixed point
-        while Riq > Riq_prev
+        # While not at fixed point and the deadline hasn't passed
+        while Riq > Riq_prev && Riq <= deadline(T[i])
             Riq_prev = Riq
             Wiq = 0
             # For each task
