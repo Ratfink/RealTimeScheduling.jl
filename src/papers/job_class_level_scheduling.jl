@@ -134,6 +134,10 @@ function low_index_first_hold(T::AbstractRealTimeTaskSystem)
     idx = 1
     for (i, τ) in enumerate(T)
         c = constraint(τ)
+        # HRT tasks have only one class, i.e., no holding is possible
+        if c == HardRealTime()
+            continue
+        end
         l = length(prio[i])
         h = Int(ceil(c.meet / (c.window - c.meet)))
         while idx < l
