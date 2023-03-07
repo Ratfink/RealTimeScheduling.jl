@@ -162,6 +162,9 @@ function <=(c::MeetAny, d::MeetRow)
     d.meet <= minimum([floor(d.window / (z + 1)), ceil(c.meet/z)])
 end
 
+"""
+Abstract parent type for all weakly hard samplers
+"""
 abstract type SamplerWeaklyHard <: Random.Sampler{BitVector} end
 
 struct SamplerUniformMissRow <: SamplerWeaklyHard
