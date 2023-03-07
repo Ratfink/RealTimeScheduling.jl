@@ -254,7 +254,7 @@ linear algorithm for the random sampling from regular languages." Algorithmica 6
 # Examples
 
 ```julia-repl
-julia> sp = SamplerUniformMissRow(MeetAny(1, 3), 10);
+julia> sp = SamplerUniformMeetAny(MeetAny(1, 3), 10);
 
 julia> rand(sp)
 10-element BitVector:
