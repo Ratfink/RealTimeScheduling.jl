@@ -230,7 +230,7 @@ function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformM
     a
 end
 
-function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
+function Random.rand(rng::Random.AbstractRNG, sp::SamplerWeaklyHard)
     a = falses(sp.H)
     Random.rand!(rng, a, sp)
 end
@@ -293,11 +293,6 @@ function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformM
         q = _σ(sp.constraint, q, a[i])
     end
     a
-end
-
-function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMeetAny)
-    a = falses(sp.H)
-    Random.rand!(rng, a, sp)
 end
 
 function _σ(constraint::MeetAny, q::Int64, a::Union{Int64, Bool})
