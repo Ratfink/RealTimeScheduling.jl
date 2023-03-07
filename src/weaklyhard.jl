@@ -1,4 +1,5 @@
 import Random
+using OffsetArrays
 
 """
 Abstract parent type of all weakly hard constraints
@@ -161,8 +162,12 @@ function <=(c::MeetAny, d::MeetRow)
     d.meet <= minimum([floor(d.window / (z + 1)), ceil(c.meet/z)])
 end
 
+"""
+Abstract parent type for all weakly hard samplers
+"""
+abstract type SamplerWeaklyHard <: Random.Sampler{BitVector} end
 
-struct SamplerUniformMissRow <: Random.Sampler{BitVector}
+struct SamplerUniformMissRow <: SamplerWeaklyHard
     constraint::MissRow
     H::Int64
     l::Matrix{BigInt}
@@ -228,11 +233,76 @@ function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformM
     a
 end
 
-function Random.rand(rng::Random.AbstractRNG, sp::SamplerUniformMissRow)
+function Random.rand(rng::Random.AbstractRNG, sp::SamplerWeaklyHard)
     a = falses(sp.H)
     Random.rand!(rng, a, sp)
 end
 
+struct SamplerUniformMeetAny <: SamplerWeaklyHard
+    constraint::MeetAny
+    H::Int64
+    l::Union{Matrix{BigInt}, OffsetArray{BigInt}}
+end
+
+"""
+    SamplerUniformMeetAny(constraint::MeetAny, H::Int64)
+
+Pre-compute data for uniformly sampling `BitVector` objects from a [`MeetAny`](@ref)
+constraint. The sampled vectors will have length `H`.
+
+The algorithm used is the recursive RGA due to Bernardi, Olivier, and Omer Giménez, "A 
+linear algorithm for the random sampling from regular languages." Algorithmica 62.1 
+(2012): 130-145.
+
+# Examples
+
+```julia-repl
+julia> sp = SamplerUniformMeetAny(MeetAny(1, 3), 10);
+
+julia> rand(sp)
+10-element BitVector:
+1
+1
+0
+1
+1
+0
+1
+0
+0
+1
+```
+"""
+function SamplerUniformMeetAny(constraint::MeetAny, H::Int64)
+    L = 2^constraint.window
+    # Build the l array with axes: (0:L-1, 0:H)
+    l = OffsetArray(zeros(BigInt, L, H+1), -1, -1)
+
+    for q = 0:L-1
+        l[q, 0] = count_ones(q) >= constraint.meet ? 1 : 0
+    end
+    for i = 1:H, q = axes(l, 1)
+        l[q, i] = l[_σ(constraint, q, 0), i-1] + l[_σ(constraint, q, 1), i-1]
+    end
+    SamplerUniformMeetAny(constraint, H, l)
+end
+
+function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformMeetAny)
+    L = 2^sp.constraint.window
+    q = L - 1
+    for i = 1:sp.H
+        p0 = sp.l[_σ(sp.constraint, q, 0), sp.H-i] / sp.l[q, sp.H-i+1]
+        a[i] = Random.rand() >= p0
+        q = _σ(sp.constraint, q, a[i])
+    end
+    a
+end
+
+function _σ(constraint::MeetAny, q::Int64, a::Union{Int64, Bool})
+    @boundscheck a == 1 || a == 0 || throw(ArgumentError("action can only be 1 or 0"))
+    q_new = (q << 1) & (2^constraint.window - 1) | a
+    count_ones(q_new) < constraint.meet || count_ones(q) < constraint.meet ? 0 : q_new
+end
 
 # Satisfaction
 """

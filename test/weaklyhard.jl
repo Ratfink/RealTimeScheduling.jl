@@ -72,5 +72,13 @@
         sp = SamplerUniformMissRow(c, 100)
         seqs = rand(sp, 1000)
         @test all(seqs .⊢ c)
+
+        sp = SamplerUniformMeetAny(a, 100)
+        seqs = rand(sp, 1000)
+        @test all(seqs .⊢ a)
+
+        sp = SamplerUniformMeetAny(f, 100)
+        seqs = rand(sp, 1000)
+        @test all(seqs .⊢ f)
     end
 end
