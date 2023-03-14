@@ -85,11 +85,15 @@ job-class first with miss thresholds (LIF-w) heuristic.
 """
 function low_index_first(T::AbstractRealTimeTaskSystem)
     N = length(T)
-    dm_order = sort(axes(T, 1), by=i->deadline(T[i]))
+    dm_order = sort(axes(T, 1), by=i->(deadline(T[i]), -cost(T[i])))
     # l[i]: number of job-classes for T[i]
     l = zeros(Int, N)
     for i in dm_order
-        l[i] = constraint(T[i]).meet + 1
+        if constraint(T[i]) == HardRealTime()
+            l[i] = 1
+        else
+            l[i] = constraint(T[i]).meet + 1
+        end
     end
     timetype = typeof(deadline(T[1]))
     prio = 1
@@ -107,7 +111,7 @@ function low_index_first(T::AbstractRealTimeTaskSystem)
         for q in 1:L
             if q > 1
                 # Sort T in ascending order of w_i and deadline
-                dm_order = sort(axes(T, 1), by=i->(miss_threshold(T[i]), deadline(T[i])))
+                dm_order = sort(axes(T, 1), by=i->(miss_threshold(T[i]), deadline(T[i]), -cost(T[i])))
             end
             for i in dm_order
                 if q <= l[i]
@@ -186,18 +190,18 @@ function wcrt_jcl(T::AbstractRealTimeTaskSystem, prio)
                                 if p == 1
                                     η[k][p] = (miss_threshold(T[k]) + 1) * period(T[k])
                                 elseif q > 1
-                                    η[k][p] = (p + 2) * period(T[k])
+                                    η[k][p] = (p + 1) * period(T[k])
                                 end
                             # If that job-class may miss
                             else
                                 if miss_threshold(T[k]) == 1
-                                    η[k][p] = (p + 1) * period(T[k])
+                                    η[k][p] = (p + 0) * period(T[k])
                                 elseif miss_threshold(T[k]) > 1
                                     η[k][p] = period(T[k])
                                 end
                             end
                             # If it's the highest-index job-class
-                            if p == constraint(T[k]).meet + 1
+                            if p == length(prio[k])
                                 η[k][p] = period(T[k])
                             end
                             v += ceil(Riq_prev / η[k][p]) * cost(T[k])
