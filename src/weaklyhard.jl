@@ -225,7 +225,7 @@ function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformM
         else
             prob_one = sp.l[1, sp.H - i + 1]
         end
-        a[i] = Random.rand() * d < prob_one
+        a[i] = Random.rand(rng) * d < prob_one
         if q != sp.constraint.miss + 1
             q = (a[i]) ? 0 : q+1
         end
@@ -292,7 +292,7 @@ function Random.rand!(rng::Random.AbstractRNG, a::BitVector, sp::SamplerUniformM
     q = L - 1
     for i = 1:sp.H
         p0 = sp.l[_σ(sp.constraint, q, 0), sp.H-i] / sp.l[q, sp.H-i+1]
-        a[i] = Random.rand() >= p0
+        a[i] = Random.rand(rng) >= p0
         q = _σ(sp.constraint, q, a[i])
     end
     a
