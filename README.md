@@ -1,25 +1,42 @@
 # RealTimeScheduling
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://Ratfink.github.io/RealTimeScheduling.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://Ratfink.github.io/RealTimeScheduling.jl/dev/)
-[![Build Status](https://github.com/Ratfink/RealTimeScheduling.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Ratfink/RealTimeScheduling.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Documentation Status](https://github.com/Ratfink/RealTimeScheduling.jl/workflows/Documentation/badge.svg)](https://github.com/Ratfink/RealTimeScheduling.jl/actions?query=workflow%3ADocumentation)
-[![codecov](https://codecov.io/gh/Ratfink/RealTimeScheduling.jl/branch/main/graph/badge.svg?token=R9W8FRV8P4)](https://codecov.io/gh/Ratfink/RealTimeScheduling.jl)
-
-Real-time systems modeling and schedulability analysis
+RETIRED: Real-time systems modeling and schedulability analysis
 
 ![Logo](docs/src/assets/logo.svg)
 
-This package aims to provide useful tools for writing schedulability studies
-with Julia.  It provides basic functionality for schedulability testing,
+This package aimed to provide useful tools for writing schedulability studies
+with Julia.  It provided basic functionality for schedulability testing,
 response time analysis, schedule simulation, and schedule plotting.
-It is inspired by [SchedCAT](https://github.com/brandenburg/schedcat) by Björn
-Brandenburg, but is not a direct port since Julia isn't Python. 😉
+It was inspired by [SchedCAT](https://github.com/brandenburg/schedcat) by Björn
+Brandenburg, but was not a direct port since Julia isn't Python. 😉
 
-## Note To Researchers
+## Note To Would-Be Users
 
-To foster more research collaboration, and enable broader code reuse, you are
-encouraged to submit your high-quality research code using this package to the
-`RealTimeScheduling.Papers` submodule.  If your code is very broadly
-applicable (e.g. new schedulability analysis for GEDF), then we would welcome
-it directly to the `RealTimeScheduling` package instead.
+Programming in 2026 is among the more depressing exercises one could subject
+oneself to.  Gone is the craft I fell in love with in my youth, replaced with
+stochastic "agents" that lack true agency, trained on stolen works produced by
+that craft.  Gone, too, are career hopes for promising young developers, after
+years of mass layoffs have saturated the job market with seekers for far too
+few openings.  Gone, too, is the semblance of a community that the FOSS world
+once provided, as too many projects become vassals to a few megacorporation
+lords that write their code for them.
+
+I no longer have any skin in the real-time game, having been forced out of
+academia last year by a bad actor who nobody in a position to do so wishes to
+hold to account.  As such, this package will no longer see any updates, and can
+be considered deprecated, or retired, to use a friendlier word.
+
+It saddens me greatly to see that the Julia language itself has begun to
+include LLM-generated code.  It was a language that I truly enjoyed writing,
+but I see the same must not be true for everyone involved.  Absent a human-
+crafted fork, I consider the language itself deprecated, or retired, as well.
+
+I don't know what I'll do with myself.  On the more nihilistic end, I am
+seriously considering becoming a trucker, and using computers as little as I
+can get away with in my personal life.  If I had the resources to, which I
+really don't, I might consider becoming a lawyer to provide pro bono services
+to people beaten down by the forces of corruption.  Keeping those capable out
+of such work must surely be a goal of the corrupt.  But regardless, I need
+somehow to make a living for myself and my partner, and talking to computers
+all day doesn't seem to do that anymore, even for someone with a master's
+degree.
